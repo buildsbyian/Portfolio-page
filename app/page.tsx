@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button';
 import SkillMatrix from '@/components/home/SkillMatrix';
 import FeaturedWork from '@/components/home/FeaturedWork';
 import VaultTeaser from '@/components/home/VaultTeaser';
+import HomeCTA from '@/components/home/HomeCTA';
 import { useLayout } from '@/components/ui/LayoutProvider';
 
 export default function HomePage() {
@@ -49,23 +50,14 @@ export default function HomePage() {
               <Button href="/work" variant="filled">
                 View Work
               </Button>
-              <Button href="/cv.pdf" variant="ghost" download>
+              <Button href="/cv.pdf" variant="ghost" download="Ian_Kuksov_CV.pdf">
                 Download CV
               </Button>
             </div>
           </AnimateIn>
         </StaggerContainer>
 
-        {layout === 'screenshot' && (
-          <AnimateIn delay={0.3} className="hidden lg:block shrink-0">
-            <div className="font-mono text-text-secondary leading-[1.2] tracking-[0.4em] opacity-40 border border-border p-8 rounded-sm select-none theme-card">
-{`+ - + - + - +
-- + - + - + -
-+ - + - + - +
-- + - + - + -`}
-            </div>
-          </AnimateIn>
-        )}
+
       </div>
     </section>
   );
@@ -80,6 +72,7 @@ export default function HomePage() {
           <SkillMatrix />
           <FeaturedWork />
           <VaultTeaser />
+          <HomeCTA />
         </div>
       </div>
     );
@@ -91,6 +84,7 @@ export default function HomePage() {
       <SkillMatrix />
       <FeaturedWork />
       <VaultTeaser />
+      <HomeCTA />
     </div>
   );
 }

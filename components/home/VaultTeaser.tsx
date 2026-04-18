@@ -40,7 +40,7 @@ export default function VaultTeaser() {
                     {item.downloadUrl ? (
                       <a
                         href={item.downloadUrl}
-                        download
+                        download={item.downloadUrl.split('/').pop()}
                         className="font-mono text-xs text-accent hover:text-accent-hover transition-colors duration-200 inline-flex items-center gap-1"
                       >
                         Download
