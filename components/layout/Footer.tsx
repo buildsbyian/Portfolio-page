@@ -8,7 +8,7 @@ export default function Footer() {
           {/* Left: Links */}
           <div className="flex items-center gap-8">
             <a
-              href="mailto:ian@example.com"
+              href="mailto:iankuksov.work@gmail.com"
               className="font-mono text-sm text-text-secondary hover:text-accent transition-colors duration-200"
               aria-label="Send email"
             >
@@ -16,7 +16,7 @@ export default function Footer() {
             </a>
 
             <a
-              href="https://linkedin.com/in/iankuksov"
+              href="https://www.linkedin.com/in/ian-kuksov-5b8a952bb/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-text-secondary hover:text-accent transition-colors duration-200 inline-flex items-center gap-2"

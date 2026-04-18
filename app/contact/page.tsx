@@ -19,13 +19,13 @@ export default function ContactPage() {
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         <a
-          href="mailto:ian@example.com"
+          href="mailto:iankuksov.work@gmail.com"
           className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-mono tracking-wide bg-accent text-bg hover:bg-accent-hover transition-all duration-200"
         >
           Send an Email
         </a>
         <a
-          href="https://linkedin.com/in/iankuksov"
+          href="https://www.linkedin.com/in/ian-kuksov-5b8a952bb/"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-mono tracking-wide border border-border text-text-primary hover:border-accent hover:text-accent transition-all duration-200"
