@@ -27,12 +27,12 @@ export const metadata: Metadata = {
     template: '%s | Ian Kuksov',
   },
   description:
-    'Chief of Staff and operator who builds the systems founders rely on. 2 years as direct CEO report at a US software company.',
+    'AI-native Chief of Staff and strategic operator who builds the systems founders rely on. Direct C-suite report at an AI-native company.',
   metadataBase: new URL('https://iankuksov.com'),
   openGraph: {
     title: 'Ian Kuksov — Operator · Builder · Chief of Staff',
     description:
-      'Chief of Staff and operator who builds the systems founders rely on.',
+      'AI-native Chief of Staff and strategic operator who builds the systems founders rely on.',
     type: 'website',
     locale: 'en_US',
   },

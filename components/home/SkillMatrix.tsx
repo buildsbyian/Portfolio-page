@@ -63,8 +63,8 @@ export default function SkillMatrix() {
         {/* Languages line */}
         <AnimateIn delay={0.3}>
           <div className="mt-16 pt-8 border-t border-border">
-            <p className="font-mono text-xs text-text-secondary tracking-wide">
-              <span className="text-accent mr-2">↗</span>
+            <p className="font-mono text-sm md:text-base text-text-primary tracking-normal leading-relaxed">
+              <span className="text-accent mr-2 text-lg">↗</span>
               {languages}
             </p>
           </div>

@@ -2,23 +2,27 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border">
-      <div className="section-container py-16 md:py-20">
+    <footer className="border-t border-border mt-16 md:mt-24">
+      <div className="section-container py-20 md:py-28">
         {/* CTA */}
-        <div className="mb-12">
-          <p className="font-display text-2xl md:text-3xl text-text-primary leading-snug max-w-lg">
-            Looking for a CoS or operator who ships?{' '}
-            <span className="text-accent">Let&apos;s talk.</span>
+        <div className="mb-16 md:mb-20">
+          <p className="font-display text-2xl md:text-3xl lg:text-4xl text-text-primary leading-snug max-w-2xl">
+            Need an AI-native Chief of Staff or Strategic Operator who actually
+            executes?{' '}
+            <span className="text-accent">Let&apos;s connect.</span>
           </p>
         </div>
 
+        {/* Divider */}
+        <div className="border-t border-border mb-8" />
+
         {/* Links & Info */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
-          <div className="flex items-center gap-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div className="flex items-center gap-8">
             {/* Email */}
             <a
               href="mailto:ian@example.com"
-              className="label hover:text-accent transition-colors duration-200"
+              className="font-mono text-sm text-text-secondary hover:text-accent transition-colors duration-200"
               aria-label="Send email"
             >
               Email
@@ -29,7 +33,7 @@ export default function Footer() {
               href="https://linkedin.com/in/iankuksov"
               target="_blank"
               rel="noopener noreferrer"
-              className="label hover:text-accent transition-colors duration-200"
+              className="text-text-secondary hover:text-accent transition-colors duration-200"
               aria-label="LinkedIn Profile"
             >
               <svg
@@ -45,7 +49,7 @@ export default function Footer() {
           </div>
 
           {/* Copyright */}
-          <p className="text-xs text-text-secondary font-mono">
+          <p className="text-sm text-text-secondary font-mono">
             © {new Date().getFullYear()} Ian Kuksov
           </p>
         </div>

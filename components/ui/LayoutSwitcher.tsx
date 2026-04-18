@@ -14,13 +14,13 @@ export default function LayoutSwitcher() {
   const { layout, setLayout } = useLayout();
 
   return (
-    <div className="fixed bottom-6 left-6 z-[100]">
-      <div className="bg-surface/90 backdrop-blur-md border border-border p-1.5 flex gap-1 rounded-full shadow-lg">
+    <div className="fixed bottom-[4.5rem] md:bottom-6 left-6 z-[100]">
+      <div className="bg-surface/90 backdrop-blur-md border border-border p-1 md:p-1.5 flex gap-0.5 md:gap-1 rounded-full shadow-lg">
         {layouts.map((l) => (
           <button
             key={l.id}
             onClick={() => setLayout(l.id)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider transition-all duration-300 ${
+            className={`flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1.5 rounded-full font-mono text-[11px] uppercase tracking-wider transition-all duration-300 ${
               layout === l.id
                 ? 'bg-accent text-bg shadow-sm opacity-100'
                 : 'text-text-secondary hover:text-text-primary hover:bg-border/50 opacity-80 hover:opacity-100'
@@ -28,7 +28,7 @@ export default function LayoutSwitcher() {
             title={l.label}
           >
             <span className="opacity-70">{l.icon}</span>
-            <span className="inline-block">{l.label.split(' ')[1]}</span>
+            <span className="hidden md:inline-block">{l.label.split(' ')[1]}</span>
           </button>
         ))}
       </div>

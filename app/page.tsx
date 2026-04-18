@@ -33,14 +33,14 @@ export default function HomePage() {
         <StaggerContainer className="max-w-3xl">
           <AnimateIn>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-text-primary leading-[1.1] tracking-tight mb-6">
-              I&apos;ve never had a playbook.{' '}
+              I&apos;ve never had a playbook.<br />
               <span className="text-accent">I write them.</span>
             </h1>
           </AnimateIn>
 
           <AnimateIn delay={0.12}>
-            <p className="font-mono text-sm text-text-secondary max-w-xl mb-10 truncate">
-              Chief of Staff · 2 years, direct CEO report · US software company
+            <p className="font-mono text-sm text-text-secondary max-w-xl mb-10">
+              Chief of Staff · Direct C-suite report · AI native
             </p>
           </AnimateIn>
 

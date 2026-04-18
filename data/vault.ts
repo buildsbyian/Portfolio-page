@@ -8,7 +8,7 @@ export interface VaultItem {
 
 /**
  * Vault items from ContentDoc.
- * Download URLs to be wired once files are in /public.
+ * Download URLs wired to /public/resources/.
  */
 export const vaultItems: VaultItem[] = [
   {
@@ -16,7 +16,7 @@ export const vaultItems: VaultItem[] = [
     description: 'A practical guide to AI-assisted development workflows.',
     type: 'Workbook',
     status: 'Ready',
-    downloadUrl: undefined, // TODO: wire to /workbook.pdf
+    downloadUrl: '/resources/ai-workbook.pdf',
   },
   {
     title: 'Lean Product Framework',
@@ -30,14 +30,14 @@ export const vaultItems: VaultItem[] = [
     description: 'Standard operating procedure for talent sourcing pipelines.',
     type: 'SOP',
     status: 'Ready',
-    downloadUrl: undefined, // TODO: wire to /sourcing-sop.pdf
+    downloadUrl: '/resources/sourcing-sop.pdf',
   },
   {
     title: 'Cursor Ruleset',
     description: 'Opinionated ruleset for AI-assisted code editors.',
     type: 'Resource',
     status: 'Ready',
-    downloadUrl: undefined,
+    downloadUrl: '/resources/cursor-ruleset.md',
   },
   {
     title: '3D Printing Articles',
