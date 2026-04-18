@@ -1,26 +1,277 @@
 @import "tailwindcss";
 
+/* ============================================
+   DESIGN SYSTEM — Portfolio
+   PRD-defined tokens + Tailwind v4 theme
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Shared Layout */
+  --max-width: 1200px;
+  --nav-height: 72px;
+  --font-mono: var(--font-dm-mono), monospace;
 }
 
+/* 1. Terminal Brutalism (Default) */
+:root, [data-theme='brutalist'] {
+  --bg: #0A0A0A;
+  --surface: #0A0A0A;
+  --border: #333333;
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --accent: #F3F4F6;
+  --accent-hover: #FFFFFF;
+  --red: #Ef4444;
+  
+  --font-display: var(--font-dm-mono), monospace;
+
+  --card-radius: 0px;
+  --pill-radius: 0px;
+  --glass-blur: blur(0px);
+  --glow-opacity: 0;
+  --shadow-hover: 0 0 0 0 transparent;
+  --card-hover-translate: 0;
+  --border-width: 1px;
+}
+
+/* 2. Glassmorphism */
+[data-theme='glass'] {
+  --bg: #0A0B0E;
+  --surface: rgba(21, 24, 33, 0.4);
+  --border: rgba(43, 48, 59, 0.6);
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --accent: #F5A524;
+  --accent-hover: #F8B449;
+  
+  --font-display: var(--font-inter), sans-serif;
+
+  --card-radius: 16px;
+  --pill-radius: 9999px;
+  --glass-blur: blur(16px);
+  --glow-opacity: 0.15;
+  --shadow-hover: 0 25px 50px -12px rgba(245, 165, 36, 0.1);
+  --card-hover-translate: -4px;
+  --border-width: 1px;
+}
+
+/* 3. Neobrutalism */
+[data-theme='neobrutal'] {
+  --bg: #F8F9FA;
+  --surface: #FFFFFF;
+  --border: #000000;
+  --text-primary: #000000;
+  --text-secondary: #4B5563;
+  --accent: #EA580C;
+  --accent-hover: #C2410C;
+  
+  --font-display: var(--font-inter), sans-serif;
+
+  --card-radius: 0px;
+  --pill-radius: 0px;
+  --glass-blur: blur(0px);
+  --glow-opacity: 0;
+  --shadow-hover: 6px 6px 0px 0px rgba(0,0,0,1);
+  --card-hover-translate: -4px;
+  --border-width: 2px;
+}
+
+/* 4. Tactile Elegance */
+[data-theme='tactile'] {
+  --bg: #EAE6DF;
+  --surface: #F2EFEA;
+  --border: #DBCFBE;
+  --text-primary: #2C2C2C;
+  --text-secondary: #6E6860;
+  --accent: #8C4A3A;
+  --accent-hover: #733C2E;
+  
+  --font-display: "Times New Roman", Times, serif;
+
+  --card-radius: 8px;
+  --pill-radius: 4px;
+  --glass-blur: blur(0px);
+  --glow-opacity: 0;
+  --shadow-hover: 0 20px 40px -5px rgba(0,0,0,0.06);
+  --card-hover-translate: -2px;
+  --border-width: 1px;
+}
+
+/* Tailwind v4 theme integration */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-red: var(--red);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  .theme-card {
+    background-color: var(--surface);
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--card-radius);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .theme-card:hover {
+    border-color: var(--accent);
+    transform: translateY(var(--card-hover-translate));
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .theme-pill {
+    background-color: transparent;
+    border: var(--border-width) solid var(--border);
+    border-radius: var(--pill-radius);
+    padding: 4px 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+  .theme-pill:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+  }
+  
+  .hero-glow {
+    opacity: var(--glow-opacity);
+    transition: opacity 1s ease;
   }
 }
 
+/* ============================================
+   BASE RESETS & DEFAULTS
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+
+::selection {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+::-moz-selection {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+/* ============================================
+   SCROLLBAR (WebKit)
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) var(--bg);
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ============================================
+   PAGE TRANSITION WRAPPER
+   ============================================ */
+
+main {
+  flex: 1;
+  padding-top: var(--nav-height);
+}
+
+/* ============================================
+   UTILITY: SECTION CONTAINER
+   ============================================ */
+
+.section-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    padding: 0 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-container {
+    padding: 0 64px;
+  }
+}
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
