@@ -12,13 +12,6 @@ export interface VaultItem {
  */
 export const vaultItems: VaultItem[] = [
   {
-    title: 'AI Coding Workbook',
-    description: 'A practical guide to AI-assisted development workflows.',
-    type: 'Workbook',
-    status: 'Ready',
-    downloadUrl: '/resources/ai-workbook.pdf',
-  },
-  {
     title: 'Lean Product Framework',
     description: 'Lightweight framework for product discovery and validation.',
     type: 'Framework',

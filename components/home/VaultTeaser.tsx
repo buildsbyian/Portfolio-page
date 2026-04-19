@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import AnimateIn, { StaggerContainer } from '@/components/ui/AnimateIn';
 import SectionLabel from '@/components/ui/SectionLabel';
 import { vaultItems } from '@/data/vault';
@@ -61,13 +62,13 @@ export default function VaultTeaser() {
         {/* View all link */}
         <AnimateIn delay={0.2}>
           <div className="mt-8">
-            <a
-              href="/vault"
+            <Link
+              href="/work#resources"
               className="font-mono text-xs text-text-secondary hover:text-accent transition-colors duration-200 inline-flex items-center gap-1.5"
             >
               View all resources
               <span className="transition-transform duration-200 hover:translate-x-1">→</span>
-            </a>
+            </Link>
           </div>
         </AnimateIn>
       </div>

@@ -34,8 +34,7 @@ export default function HomePage() {
         <StaggerContainer className="max-w-3xl">
           <AnimateIn>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-text-primary leading-[1.1] tracking-tight mb-6">
-              I&apos;ve never had a playbook.<br />
-              <span className="text-accent">I write them.</span>
+              I turn ambiguous problems into <span className="text-accent">working systems</span>
             </h1>
           </AnimateIn>
 

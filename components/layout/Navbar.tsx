@@ -7,9 +7,8 @@ import { motion, AnimatePresence } from 'motion/react';
 
 const NAV_LINKS = [
   { href: '/work', label: 'Work' },
-  { href: '/hardware', label: 'Hardware' },
-  { href: '/vault', label: 'Resources' },
   { href: '/cv', label: 'CV' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
