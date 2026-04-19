@@ -4,34 +4,7 @@ import Link from 'next/link';
 import AnimateIn, { StaggerContainer } from '@/components/ui/AnimateIn';
 import SectionLabel from '@/components/ui/SectionLabel';
 import Tag from '@/components/ui/Tag';
-
-/**
- * Placeholder featured projects.
- * Replace with real data once projects are chosen.
- */
-const featuredProjects = [
-  {
-    title: 'Project Coming Soon',
-    hook: 'A full software case study will go here — internal tool, dashboard, or AI product.',
-    category: 'Software' as const,
-    slug: '#',
-    size: 'large' as const,
-  },
-  {
-    title: 'Hardware Project',
-    hook: 'Physical product development and 3D work — proof of range.',
-    category: 'Hardware' as const,
-    slug: '#',
-    size: 'small' as const,
-  },
-  {
-    title: 'Strategy Resource',
-    hook: 'Framework, SOP, or strategic deliverable — proof of operational thinking.',
-    category: 'Strategy' as const,
-    slug: '#',
-    size: 'small' as const,
-  },
-];
+import { projects, Project } from '@/data/projects';
 
 const categoryTagVariant = {
   Software: 'accent' as const,
@@ -86,7 +59,7 @@ export default function FeaturedWork() {
         </AnimateIn>
 
         <StaggerContainer className={getGridClasses()}>
-          {featuredProjects.map((project, index) => {
+          {projects.filter(p => p.featured).slice(0, 3).map((project, index) => {
             const props = getCardProps(index);
             return (
               <AnimateIn key={index} className={props.className}>
@@ -101,7 +74,7 @@ export default function FeaturedWork() {
 }
 
 interface ProjectCardProps {
-  project: (typeof featuredProjects)[number];
+  project: Project;
   large?: boolean;
 }
 
