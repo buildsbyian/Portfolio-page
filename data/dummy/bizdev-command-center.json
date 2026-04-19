@@ -2,7 +2,7 @@
   "projects": [
     {
       "id": "proj-northstar-logistics",
-      "name": "Apollo",
+      "name": "SummitArc",
       "description": "",
       "priority": "high",
       "status": "active",
@@ -87,7 +87,7 @@
     },
     {
       "id": "proj-meridian-events",
-      "name": "WEX",
+      "name": "Northlane",
       "description": "",
       "priority": "high",
       "status": "active",
@@ -327,7 +327,7 @@
     {
       "id": "task-vip-2",
       "projectId": "proj-vip-briefings",
-      "text": "Draft Schlegel profile and goal map v0.1.",
+      "text": "Draft Sterling profile and goal map v0.1.",
       "status": "todo",
       "completed": false,
       "createdAt": "2026-03-17T09:30:00.000Z"
