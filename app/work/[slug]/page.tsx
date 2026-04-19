@@ -212,11 +212,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {isSoftware ? (
         /* Stacked Layout for Software */
         <div className="space-y-14 md:space-y-16 lg:space-y-20">
-          <section className={isWideDemo ? 'mx-auto w-full max-w-[1700px] px-3 md:px-6 lg:px-10' : 'section-container'}>
-            {renderMediaBox(true)}
-          </section>
-          <section className={isWideDemo ? 'mx-auto w-full max-w-[1500px] border-t border-border px-4 pt-14 md:px-6 md:pt-16 lg:px-10 lg:pt-20' : 'section-container border-t border-border pt-14 md:pt-16 lg:pt-20'}>
+          <section
+            className={
+              isWideDemo
+                ? 'mx-auto w-full max-w-[1500px] border-t border-border px-4 pt-14 md:px-6 md:pt-16 lg:px-10 lg:pt-20'
+                : 'section-container border-t border-border pt-14 md:pt-16 lg:pt-20'
+            }
+          >
             {renderContentBlocks(true)}
+          </section>
+
+          <section
+            className={
+              isWideDemo
+                ? 'relative left-1/2 w-screen max-w-none -translate-x-1/2 px-0'
+                : 'section-container'
+            }
+          >
+            {renderMediaBox(true)}
           </section>
         </div>
       ) : (

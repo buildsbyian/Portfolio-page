@@ -9,6 +9,50 @@ export type ProjectStatus =
 
 export type TaskStatus = 'todo' | 'doing' | 'waiting' | 'done';
 
+export type DemoContactType =
+  | 'guest'
+  | 'target_guest'
+  | 'host'
+  | 'established_connection'
+  | 'vip'
+  | 'potential_cto_club_member'
+  | 'cto_club_member'
+  | 'partner'
+  | 'advisor'
+  | 'founder';
+
+export type DemoContactArea =
+  | 'engineering'
+  | 'founders'
+  | 'product'
+  | 'events'
+  | 'partnerships'
+  | 'community'
+  | 'research'
+  | null;
+
+export type DemoEventType = 'product' | 'engineering' | 'startup' | 'cto_club';
+
+export type DemoEventStatus =
+  | 'Planning'
+  | 'Invitations Sent'
+  | 'In Progress'
+  | 'Completed'
+  | 'Cancelled';
+
+export type DemoPipelineStage =
+  | 'Initial Outreach'
+  | 'Forming the Relationship'
+  | 'Maintaining the Relationship';
+
+export type DemoVipPriority = 'High' | 'Medium' | 'Low';
+
+export type DemoVipInitiativeType = 'give' | 'ask';
+
+export type DemoVipInitiativeStatus = 'active' | 'planned' | 'completed';
+
+export type DemoVipActivityType = 'meeting' | 'email' | 'intro' | 'note';
+
 export interface RatingMetrics {
   revenuePotential: number;
   insiderSupport: number;
@@ -48,43 +92,67 @@ export interface DemoContact {
   name: string;
   role: string;
   email: string;
+  additionalEmails: string[];
   company: string;
-  type: 'guest' | 'vip' | 'partner' | 'advisor' | 'founder';
-  area: 'events' | 'partnerships' | 'community' | 'research' | null;
+  type: DemoContactType;
+  area: DemoContactArea;
   linkedinUrl?: string;
+  isInThinkTank: boolean;
+  currentProjects: string[];
+  goalsAspirations: string[];
+  strategicGoals: string[];
+  generalNotes: string;
+  createdAt: string;
 }
 
 export interface DemoEvent {
   id: string;
   name: string;
+  eventType: DemoEventType;
   eventDate: string;
-  status: 'Draft' | 'Invitations Sent' | 'In Progress' | 'Completed';
+  status: DemoEventStatus;
   venue: string;
-  focus: string;
+  description: string;
   guestCount: number;
+  maxAttendees: number;
+  createdAt: string;
 }
 
 export interface DemoPipelineEntry {
   id: string;
   contactId: string;
-  stage:
-    | 'New Contact'
-    | 'Initial Outreach'
-    | 'Connected'
-    | 'Building Relationship'
-    | 'Strategic Partner';
+  stage: DemoPipelineStage;
   nextAction: string;
   nextActionDate: string;
+  lastActionDate: string;
   notes: string;
+}
+
+export interface DemoVipInitiative {
+  id: string;
+  title: string;
+  type: DemoVipInitiativeType;
+  status: DemoVipInitiativeStatus;
+  detail: string;
+}
+
+export interface DemoVipActivity {
+  id: string;
+  date: string;
+  type: DemoVipActivityType;
+  summary: string;
 }
 
 export interface DemoVipProfile {
   id: string;
-  name: string;
-  company: string;
-  priority: 'High' | 'Medium' | 'Low';
+  contactId: string;
+  priority: DemoVipPriority;
+  relationshipSummary: string;
   objective: string;
   nextStep: string;
+  tags: string[];
+  initiatives: DemoVipInitiative[];
+  activities: DemoVipActivity[];
 }
 
 export interface DemoCtoLead {

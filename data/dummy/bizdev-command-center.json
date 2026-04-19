@@ -2,8 +2,8 @@
   "projects": [
     {
       "id": "proj-northstar-logistics",
-      "name": "Northstar Logistics Expansion",
-      "description": "Packaging an AI-assisted operations workshop into a paid pilot for a regional logistics group.",
+      "name": "Apollo",
+      "description": "",
       "priority": "high",
       "status": "active",
       "isIanCollaboration": false,
@@ -19,8 +19,8 @@
     },
     {
       "id": "proj-blue-mesa-retail",
-      "name": "Blue Mesa Retail Pilot",
-      "description": "Testing a lighter-weight discovery sprint for a multi-brand retail operator with fragmented reporting.",
+      "name": "ASC",
+      "description": "",
       "priority": "medium",
       "status": "active",
       "isIanCollaboration": false,
@@ -36,8 +36,8 @@
     },
     {
       "id": "proj-ember-health",
-      "name": "Ember Health Advisory Sprint",
-      "description": "Potential advisory engagement around executive reporting, follow-up systems, and partner visibility.",
+      "name": "Built",
+      "description": "",
       "priority": "medium",
       "status": "potential",
       "isIanCollaboration": false,
@@ -53,8 +53,8 @@
     },
     {
       "id": "proj-driftline-manufacturing",
-      "name": "Driftline Manufacturing Workshop",
-      "description": "Opportunity to convert scattered shop-floor updates and partner notes into a single deal-tracking workflow.",
+      "name": "Mede",
+      "description": "",
       "priority": "high",
       "status": "potential",
       "isIanCollaboration": false,
@@ -70,8 +70,8 @@
     },
     {
       "id": "proj-signal-forge",
-      "name": "Signal Forge Platform Audit",
-      "description": "Paused platform audit for a founder-led software shop while budget approval works through finance.",
+      "name": "Subpop",
+      "description": "",
       "priority": "low",
       "status": "on-hold",
       "isIanCollaboration": false,
@@ -87,8 +87,8 @@
     },
     {
       "id": "proj-meridian-events",
-      "name": "Meridian Events Partnership",
-      "description": "Designing an invite-and-follow-up engine for a curated leadership dinner series.",
+      "name": "WEX",
+      "description": "",
       "priority": "high",
       "status": "active",
       "isIanCollaboration": false,
@@ -104,8 +104,8 @@
     },
     {
       "id": "proj-operator-roundtable",
-      "name": "Operator Roundtable Launch",
-      "description": "Internal collaboration to define the member profile, source targets, and map warm-intro paths.",
+      "name": "C-Suite Think Tank",
+      "description": "",
       "priority": "high",
       "status": "active",
       "isIanCollaboration": true,
@@ -121,8 +121,8 @@
     },
     {
       "id": "proj-event-engine",
-      "name": "Event Engine Follow-Up System",
-      "description": "Internal collaboration to standardize guest sourcing, debriefs, and post-event conversion loops.",
+      "name": "Events",
+      "description": "",
       "priority": "high",
       "status": "active",
       "isIanCollaboration": true,
@@ -138,8 +138,8 @@
     },
     {
       "id": "proj-research-library",
-      "name": "Research Library Automation",
-      "description": "Internal effort to centralize transcripts, market scans, and reusable outreach notes.",
+      "name": "Research that support biz dev",
+      "description": "Biz Dev Strategies, Sources, and reusable research material.",
       "priority": "medium",
       "status": "potential",
       "isIanCollaboration": true,
@@ -155,8 +155,8 @@
     },
     {
       "id": "proj-vip-briefings",
-      "name": "VIP Briefing Profiles",
-      "description": "Pilot richer stakeholder profiles so leadership can walk into meetings with current goals, context, and next moves.",
+      "name": "VIP Personas management",
+      "description": "",
       "priority": "medium",
       "status": "potential",
       "isIanCollaboration": true,
@@ -271,7 +271,7 @@
     {
       "id": "task-roundtable-1",
       "projectId": "proj-operator-roundtable",
-      "text": "Refine the ideal member profile with target company criteria.",
+      "text": "Refine ideal member profile and target company list.",
       "status": "doing",
       "completed": false,
       "createdAt": "2026-03-16T09:00:00.000Z"
@@ -279,7 +279,7 @@
     {
       "id": "task-roundtable-2",
       "projectId": "proj-operator-roundtable",
-      "text": "Build first-pass list of 40 target operators and likely connectors.",
+      "text": "Create target company and individual list.",
       "status": "waiting",
       "completed": false,
       "createdAt": "2026-03-16T09:30:00.000Z"
@@ -287,7 +287,7 @@
     {
       "id": "task-event-engine-1",
       "projectId": "proj-event-engine",
-      "text": "Define a standard post-event debrief template for every host.",
+      "text": "Define target personas.",
       "status": "todo",
       "completed": false,
       "createdAt": "2026-03-16T14:00:00.000Z"
@@ -295,7 +295,7 @@
     {
       "id": "task-event-engine-2",
       "projectId": "proj-event-engine",
-      "text": "Separate guests into strategic follow-up, nurture, and archive buckets.",
+      "text": "Establish data management system.",
       "status": "doing",
       "completed": false,
       "createdAt": "2026-03-16T14:15:00.000Z"
@@ -303,7 +303,7 @@
     {
       "id": "task-event-engine-3",
       "projectId": "proj-event-engine",
-      "text": "Capture reusable invite copy blocks from the last successful event.",
+      "text": "Develop comprehensive follow-up strategy.",
       "status": "done",
       "completed": true,
       "createdAt": "2026-03-15T08:45:00.000Z"
@@ -311,7 +311,7 @@
     {
       "id": "task-library-1",
       "projectId": "proj-research-library",
-      "text": "Group transcript summaries by vertical, use case, and repeatable insight.",
+      "text": "Automation of some tasks.",
       "status": "todo",
       "completed": false,
       "createdAt": "2026-03-11T13:00:00.000Z"
@@ -319,7 +319,7 @@
     {
       "id": "task-vip-1",
       "projectId": "proj-vip-briefings",
-      "text": "Draft the first briefing layout with goals, history, and next-best action.",
+      "text": "VIP tracking system: outline system requirements.",
       "status": "doing",
       "completed": false,
       "createdAt": "2026-03-17T09:00:00.000Z"
@@ -327,7 +327,7 @@
     {
       "id": "task-vip-2",
       "projectId": "proj-vip-briefings",
-      "text": "Test which sections leadership actually references during prep calls.",
+      "text": "Draft Schlegel profile and goal map v0.1.",
       "status": "todo",
       "completed": false,
       "createdAt": "2026-03-17T09:30:00.000Z"
