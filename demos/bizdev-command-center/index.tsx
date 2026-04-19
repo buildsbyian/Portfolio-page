@@ -29,6 +29,39 @@ import type {
 } from './types';
 
 const STORAGE_KEY = 'portfolio.command-center.demo.v3';
+const SANITIZED_TERM_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/\bApollo\b/gi, 'SummitArc'],
+  [/\bWEX\b/gi, 'Northlane'],
+  [/\bSchlegel\b/gi, 'Sterling'],
+];
+
+function sanitizeDemoString(value: string) {
+  return SANITIZED_TERM_REPLACEMENTS.reduce(
+    (result, [pattern, replacement]) => result.replace(pattern, replacement),
+    value
+  );
+}
+
+function sanitizeDemoState<T>(value: T): T {
+  if (typeof value === 'string') {
+    return sanitizeDemoString(value) as T;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeDemoState(item)) as T;
+  }
+
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>).map(([key, entryValue]) => [
+      key,
+      sanitizeDemoState(entryValue),
+    ]);
+
+    return Object.fromEntries(entries) as T;
+  }
+
+  return value;
+}
 
 const TOOL_TABS = [
   { id: 'contacts', label: 'Contacts' },
@@ -138,14 +171,16 @@ const defaultEventDraft: EventDraft = {
 
 function loadInitialState(): CommandCenterState {
   if (typeof window === 'undefined') {
-    return createCommandCenterSeed();
+    return sanitizeDemoState(createCommandCenterSeed());
   }
 
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored ? (JSON.parse(stored) as CommandCenterState) : createCommandCenterSeed();
+    return sanitizeDemoState(
+      stored ? (JSON.parse(stored) as CommandCenterState) : createCommandCenterSeed()
+    );
   } catch {
-    return createCommandCenterSeed();
+    return sanitizeDemoState(createCommandCenterSeed());
   }
 }
 
@@ -282,6 +317,10 @@ export default function BizDevCommandCenterDemo() {
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [state]);
+
+  useEffect(() => {
+    setState((currentState) => sanitizeDemoState(currentState));
+  }, []);
 
   const selectedContact =
     state.contacts.find((contact) => contact.id === selectedContactId) ?? null;
@@ -1514,7 +1553,7 @@ export default function BizDevCommandCenterDemo() {
                 {filteredPipeline.map((entry) => (
                   <div
                     key={entry.id}
-                    className="grid gap-4 rounded-2xl border border-[#e5e7eb] bg-white px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px_minmax(0,1.2fr)_180px_180px]"
+                    className="grid gap-4 rounded-2xl border border-[#e5e7eb] bg-white px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px_minmax(0,1.1fr)_minmax(0,1fr)_220px]"
                   >
                     <div>
                       <p className="font-semibold text-[#111827]">
@@ -1528,7 +1567,7 @@ export default function BizDevCommandCenterDemo() {
                       </p>
                     </div>
 
-                    <div className="grid gap-3">
+                    <div>
                       <select
                         value={entry.stage}
                         onChange={(event) =>
@@ -1544,15 +1583,6 @@ export default function BizDevCommandCenterDemo() {
                           </option>
                         ))}
                       </select>
-                      <input
-                        value={entry.nextAction}
-                        onChange={(event) =>
-                          updatePipelineEntry(entry.id, {
-                            nextAction: event.target.value,
-                          })
-                        }
-                        className="rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
-                      />
                     </div>
 
                     <textarea
@@ -1563,6 +1593,16 @@ export default function BizDevCommandCenterDemo() {
                         })
                       }
                       className="min-h-24 rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
+                    />
+
+                    <input
+                      value={entry.nextAction}
+                      onChange={(event) =>
+                        updatePipelineEntry(entry.id, {
+                          nextAction: event.target.value,
+                        })
+                      }
+                      className="rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
                     />
 
                     <div className="grid gap-3">
@@ -1734,7 +1774,9 @@ export default function BizDevCommandCenterDemo() {
                         label="Current Projects"
                         value={
                           selectedVipContact.currentProjects.length > 0
-                            ? selectedVipContact.currentProjects.join(', ')
+                            ? selectedVipContact.currentProjects
+                                .map((project) => sanitizeDemoString(project))
+                                .join(', ')
                             : 'No active projects documented yet.'
                         }
                       />
@@ -2520,7 +2562,7 @@ function DetailField({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-[#e5e7eb] bg-[#f8fafc] p-4">
       <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#64748b]">{label}</p>
-      <p className="mt-2 text-base text-[#111827]">{value}</p>
+      <p className="mt-2 text-base text-[#111827]">{sanitizeDemoString(value)}</p>
     </div>
   );
 }
