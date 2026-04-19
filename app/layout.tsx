@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, DM_Mono } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { ThemeProvider } from '@/components/ui/ThemeProvider';
 import { LayoutProvider } from '@/components/ui/LayoutProvider';
-import ThemeSwitcher from '@/components/ui/ThemeSwitcher';
 import LayoutSwitcher from '@/components/ui/LayoutSwitcher';
 import './globals.css';
 
@@ -37,7 +35,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
   },
   other: {
-    'theme-color': '#0A0B0E',
+    'theme-color': '#F8F9FA',
   },
 };
 
@@ -49,19 +47,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="neobrutal"
       className={`${inter.variable} ${dmMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>
-          <LayoutProvider>
-            <Navbar />
-            <main>{children}</main>
-            <ThemeSwitcher />
-            <LayoutSwitcher />
-            <Footer />
-          </LayoutProvider>
-        </ThemeProvider>
+        <LayoutProvider>
+          <Navbar />
+          <main>{children}</main>
+          <LayoutSwitcher />
+          <Footer />
+        </LayoutProvider>
       </body>
     </html>
   );

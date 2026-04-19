@@ -1,0 +1,336 @@
+{
+  "projects": [
+    {
+      "id": "proj-northstar-logistics",
+      "name": "Northstar Logistics Expansion",
+      "description": "Packaging an AI-assisted operations workshop into a paid pilot for a regional logistics group.",
+      "priority": "high",
+      "status": "active",
+      "isIanCollaboration": false,
+      "createdAt": "2026-02-06T09:00:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 5,
+        "insiderSupport": 4,
+        "strategicFit": 5,
+        "timing": 4,
+        "effort": 3,
+        "stabilityClarity": 4
+      }
+    },
+    {
+      "id": "proj-blue-mesa-retail",
+      "name": "Blue Mesa Retail Pilot",
+      "description": "Testing a lighter-weight discovery sprint for a multi-brand retail operator with fragmented reporting.",
+      "priority": "medium",
+      "status": "active",
+      "isIanCollaboration": false,
+      "createdAt": "2026-01-29T14:30:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 4,
+        "insiderSupport": 3,
+        "strategicFit": 4,
+        "timing": 4,
+        "effort": 4,
+        "stabilityClarity": 3
+      }
+    },
+    {
+      "id": "proj-ember-health",
+      "name": "Ember Health Advisory Sprint",
+      "description": "Potential advisory engagement around executive reporting, follow-up systems, and partner visibility.",
+      "priority": "medium",
+      "status": "potential",
+      "isIanCollaboration": false,
+      "createdAt": "2026-02-12T11:15:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 4,
+        "insiderSupport": 3,
+        "strategicFit": 4,
+        "timing": 3,
+        "effort": 3,
+        "stabilityClarity": 4
+      }
+    },
+    {
+      "id": "proj-driftline-manufacturing",
+      "name": "Driftline Manufacturing Workshop",
+      "description": "Opportunity to convert scattered shop-floor updates and partner notes into a single deal-tracking workflow.",
+      "priority": "high",
+      "status": "potential",
+      "isIanCollaboration": false,
+      "createdAt": "2026-03-03T08:20:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 5,
+        "insiderSupport": 2,
+        "strategicFit": 4,
+        "timing": 3,
+        "effort": 4,
+        "stabilityClarity": 3
+      }
+    },
+    {
+      "id": "proj-signal-forge",
+      "name": "Signal Forge Platform Audit",
+      "description": "Paused platform audit for a founder-led software shop while budget approval works through finance.",
+      "priority": "low",
+      "status": "on-hold",
+      "isIanCollaboration": false,
+      "createdAt": "2026-01-18T13:45:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 3,
+        "insiderSupport": 2,
+        "strategicFit": 4,
+        "timing": 2,
+        "effort": 2,
+        "stabilityClarity": 3
+      }
+    },
+    {
+      "id": "proj-meridian-events",
+      "name": "Meridian Events Partnership",
+      "description": "Designing an invite-and-follow-up engine for a curated leadership dinner series.",
+      "priority": "high",
+      "status": "active",
+      "isIanCollaboration": false,
+      "createdAt": "2026-02-20T16:10:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 4,
+        "insiderSupport": 4,
+        "strategicFit": 5,
+        "timing": 5,
+        "effort": 3,
+        "stabilityClarity": 4
+      }
+    },
+    {
+      "id": "proj-operator-roundtable",
+      "name": "Operator Roundtable Launch",
+      "description": "Internal collaboration to define the member profile, source targets, and map warm-intro paths.",
+      "priority": "high",
+      "status": "active",
+      "isIanCollaboration": true,
+      "createdAt": "2026-03-05T10:00:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 3,
+        "insiderSupport": 5,
+        "strategicFit": 5,
+        "timing": 4,
+        "effort": 3,
+        "stabilityClarity": 4
+      }
+    },
+    {
+      "id": "proj-event-engine",
+      "name": "Event Engine Follow-Up System",
+      "description": "Internal collaboration to standardize guest sourcing, debriefs, and post-event conversion loops.",
+      "priority": "high",
+      "status": "active",
+      "isIanCollaboration": true,
+      "createdAt": "2026-03-08T12:00:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 3,
+        "insiderSupport": 4,
+        "strategicFit": 5,
+        "timing": 5,
+        "effort": 4,
+        "stabilityClarity": 4
+      }
+    },
+    {
+      "id": "proj-research-library",
+      "name": "Research Library Automation",
+      "description": "Internal effort to centralize transcripts, market scans, and reusable outreach notes.",
+      "priority": "medium",
+      "status": "potential",
+      "isIanCollaboration": true,
+      "createdAt": "2026-02-15T15:30:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 2,
+        "insiderSupport": 4,
+        "strategicFit": 4,
+        "timing": 3,
+        "effort": 3,
+        "stabilityClarity": 5
+      }
+    },
+    {
+      "id": "proj-vip-briefings",
+      "name": "VIP Briefing Profiles",
+      "description": "Pilot richer stakeholder profiles so leadership can walk into meetings with current goals, context, and next moves.",
+      "priority": "medium",
+      "status": "potential",
+      "isIanCollaboration": true,
+      "createdAt": "2026-03-11T09:40:00.000Z",
+      "ratingMetrics": {
+        "revenuePotential": 3,
+        "insiderSupport": 4,
+        "strategicFit": 4,
+        "timing": 4,
+        "effort": 3,
+        "stabilityClarity": 4
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-northstar-1",
+      "projectId": "proj-northstar-logistics",
+      "text": "Map buyer team and confirm who owns pilot budget.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-10T09:00:00.000Z"
+    },
+    {
+      "id": "task-northstar-2",
+      "projectId": "proj-northstar-logistics",
+      "text": "Draft two-scope proposal: diagnostics only vs. diagnostics plus implementation.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-10T10:00:00.000Z"
+    },
+    {
+      "id": "task-northstar-3",
+      "projectId": "proj-northstar-logistics",
+      "text": "Send post-call recap with success metrics and next-step timeline.",
+      "status": "done",
+      "completed": true,
+      "createdAt": "2026-03-09T11:00:00.000Z"
+    },
+    {
+      "id": "task-blue-mesa-1",
+      "projectId": "proj-blue-mesa-retail",
+      "text": "Collect three examples of broken reporting handoffs from store ops.",
+      "status": "waiting",
+      "completed": false,
+      "createdAt": "2026-03-12T08:30:00.000Z"
+    },
+    {
+      "id": "task-blue-mesa-2",
+      "projectId": "proj-blue-mesa-retail",
+      "text": "Package pilot narrative around visibility, speed, and leadership confidence.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-12T09:15:00.000Z"
+    },
+    {
+      "id": "task-ember-1",
+      "projectId": "proj-ember-health",
+      "text": "Research advisory budget ranges for comparable healthcare operators.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-13T12:00:00.000Z"
+    },
+    {
+      "id": "task-driftline-1",
+      "projectId": "proj-driftline-manufacturing",
+      "text": "Build a one-page pain-point summary from discovery notes.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-14T13:00:00.000Z"
+    },
+    {
+      "id": "task-driftline-2",
+      "projectId": "proj-driftline-manufacturing",
+      "text": "Identify warm intro path through current advisor network.",
+      "status": "waiting",
+      "completed": false,
+      "createdAt": "2026-03-14T14:00:00.000Z"
+    },
+    {
+      "id": "task-signal-1",
+      "projectId": "proj-signal-forge",
+      "text": "Check back once finance locks the next quarter tooling budget.",
+      "status": "waiting",
+      "completed": false,
+      "createdAt": "2026-03-01T15:00:00.000Z"
+    },
+    {
+      "id": "task-meridian-1",
+      "projectId": "proj-meridian-events",
+      "text": "Finalize host brief and target attendee mix for the April dinner.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-15T10:00:00.000Z"
+    },
+    {
+      "id": "task-meridian-2",
+      "projectId": "proj-meridian-events",
+      "text": "Draft the follow-up sequence for new introductions made at the event.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-15T11:00:00.000Z"
+    },
+    {
+      "id": "task-meridian-3",
+      "projectId": "proj-meridian-events",
+      "text": "Turn guest shortlist into sponsor and relationship buckets.",
+      "status": "done",
+      "completed": true,
+      "createdAt": "2026-03-14T16:00:00.000Z"
+    },
+    {
+      "id": "task-roundtable-1",
+      "projectId": "proj-operator-roundtable",
+      "text": "Refine the ideal member profile with target company criteria.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-16T09:00:00.000Z"
+    },
+    {
+      "id": "task-roundtable-2",
+      "projectId": "proj-operator-roundtable",
+      "text": "Build first-pass list of 40 target operators and likely connectors.",
+      "status": "waiting",
+      "completed": false,
+      "createdAt": "2026-03-16T09:30:00.000Z"
+    },
+    {
+      "id": "task-event-engine-1",
+      "projectId": "proj-event-engine",
+      "text": "Define a standard post-event debrief template for every host.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-16T14:00:00.000Z"
+    },
+    {
+      "id": "task-event-engine-2",
+      "projectId": "proj-event-engine",
+      "text": "Separate guests into strategic follow-up, nurture, and archive buckets.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-16T14:15:00.000Z"
+    },
+    {
+      "id": "task-event-engine-3",
+      "projectId": "proj-event-engine",
+      "text": "Capture reusable invite copy blocks from the last successful event.",
+      "status": "done",
+      "completed": true,
+      "createdAt": "2026-03-15T08:45:00.000Z"
+    },
+    {
+      "id": "task-library-1",
+      "projectId": "proj-research-library",
+      "text": "Group transcript summaries by vertical, use case, and repeatable insight.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-11T13:00:00.000Z"
+    },
+    {
+      "id": "task-vip-1",
+      "projectId": "proj-vip-briefings",
+      "text": "Draft the first briefing layout with goals, history, and next-best action.",
+      "status": "doing",
+      "completed": false,
+      "createdAt": "2026-03-17T09:00:00.000Z"
+    },
+    {
+      "id": "task-vip-2",
+      "projectId": "proj-vip-briefings",
+      "text": "Test which sections leadership actually references during prep calls.",
+      "status": "todo",
+      "completed": false,
+      "createdAt": "2026-03-17T09:30:00.000Z"
+    }
+  ]
+}

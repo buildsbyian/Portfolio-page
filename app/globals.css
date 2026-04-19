@@ -8,12 +8,12 @@
 :root {
   /* Shared Layout */
   --max-width: 1200px;
-  --nav-height: 72px;
+  --nav-height: 88px;
   --font-mono: var(--font-dm-mono), monospace;
 }
 
-/* 1. Terminal Brutalism (Default) */
-:root, [data-theme='brutalist'] {
+/* 1. Terminal Brutalism */
+[data-theme='brutalist'] {
   --bg: #0A0A0A;
   --surface: #0A0A0A;
   --border: #333333;
@@ -55,8 +55,8 @@
   --border-width: 1px;
 }
 
-/* 3. Neobrutalism */
-[data-theme='neobrutal'] {
+/* 3. Neobrutalism (Default) */
+:root, [data-theme='neobrutal'] {
   --bg: #F8F9FA;
   --surface: #FFFFFF;
   --border: #000000;

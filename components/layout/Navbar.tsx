@@ -51,19 +51,19 @@ export default function Navbar() {
         {/* Monogram */}
         <Link
           href="/"
-          className="font-display text-2xl tracking-tight text-text-primary hover:text-accent transition-colors duration-200"
+          className="font-display text-[2rem] md:text-[2.4rem] leading-none tracking-[-0.04em] text-text-primary hover:text-accent transition-colors duration-200"
           aria-label="Home"
         >
           IK
         </Link>
 
         {/* Desktop Nav */}
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden md:flex items-center gap-10 lg:gap-12">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`label transition-colors duration-200 hover:text-accent ${
+                className={`font-mono text-[0.9rem] lg:text-[0.98rem] font-medium uppercase tracking-[0.14em] transition-colors duration-200 hover:text-accent ${
                   isActive(link.href)
                     ? 'text-accent'
                     : 'text-text-secondary'
@@ -77,23 +77,23 @@ export default function Navbar() {
 
         {/* Mobile Hamburger */}
         <button
-          className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-1.5 z-50"
+          className="md:hidden relative w-10 h-10 flex flex-col items-center justify-center gap-1.5 z-50"
           onClick={() => setIsOpen(!isOpen)}
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isOpen}
         >
           <motion.span
-            className="block w-5 h-[1.5px] bg-text-primary origin-center"
+            className="block w-6 h-[2px] bg-text-primary origin-center"
             animate={isOpen ? { rotate: 45, y: 4.5 } : { rotate: 0, y: 0 }}
             transition={{ duration: 0.2 }}
           />
           <motion.span
-            className="block w-5 h-[1.5px] bg-text-primary origin-center"
+            className="block w-6 h-[2px] bg-text-primary origin-center"
             animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.15 }}
           />
           <motion.span
-            className="block w-5 h-[1.5px] bg-text-primary origin-center"
+            className="block w-6 h-[2px] bg-text-primary origin-center"
             animate={isOpen ? { rotate: -45, y: -4.5 } : { rotate: 0, y: 0 }}
             transition={{ duration: 0.2 }}
           />

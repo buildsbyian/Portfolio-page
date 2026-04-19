@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import SectionLabel from '@/components/ui/SectionLabel';
 import Tag from '@/components/ui/Tag';
 import Button from '@/components/ui/Button';
+import BizDevCommandCenterDemo from '@/demos/bizdev-command-center';
 import { projects } from '@/data/projects';
 
 interface ProjectPageProps {
@@ -28,6 +29,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const isSoftware = project.category === 'Software';
+  const isWideDemo = project.slug === 'bizdev-command-center';
   const projectLinks = [
     ...(project.content?.repoUrl
       ? [{ href: project.content.repoUrl, label: 'View GitHub Repo', external: true }]
@@ -46,6 +48,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const renderMediaBox = (isFullWidth = false) => {
     switch (project.category) {
       case 'Software':
+        if (project.slug === 'bizdev-command-center') {
+          return <BizDevCommandCenterDemo />;
+        }
+
         return (
           <div className={`w-full ${isFullWidth ? 'aspect-video' : 'aspect-[4/3] lg:aspect-[3/4]'} bg-surface border border-border flex flex-col items-center justify-center p-8 text-center relative overflow-hidden h-full min-h-[400px]`}>
              {/* Subtle grid pattern background */}
@@ -206,10 +212,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {isSoftware ? (
         /* Stacked Layout for Software */
         <div className="space-y-14 md:space-y-16 lg:space-y-20">
-          <section className="section-container">
+          <section className={isWideDemo ? 'mx-auto w-full max-w-[1700px] px-3 md:px-6 lg:px-10' : 'section-container'}>
             {renderMediaBox(true)}
           </section>
-          <section className="section-container border-t border-border pt-14 md:pt-16 lg:pt-20">
+          <section className={isWideDemo ? 'mx-auto w-full max-w-[1500px] border-t border-border px-4 pt-14 md:px-6 md:pt-16 lg:px-10 lg:pt-20' : 'section-container border-t border-border pt-14 md:pt-16 lg:pt-20'}>
             {renderContentBlocks(true)}
           </section>
         </div>
