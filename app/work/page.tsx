@@ -25,7 +25,10 @@ export default function WorkPage() {
   const softwareProjects = projects.filter((project) => project.category === 'Software');
   const hardwareProjects = projects.filter((project) => project.category === 'Hardware');
   const strategyProjects = projects.filter((project) => project.category === 'Strategy');
-  const readyResources = vaultItems.filter((item) => item.status === 'Ready');
+  const strategyProjectTitles = new Set(strategyProjects.map((project) => project.title));
+  const readyResources = vaultItems.filter(
+    (item) => item.status === 'Ready' && !strategyProjectTitles.has(item.title)
+  );
 
   return (
     <section className="section-container py-24 md:py-32">

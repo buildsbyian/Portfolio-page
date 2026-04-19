@@ -42,6 +42,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     ...(project.content?.pdfUrl
       ? [{ href: project.content.pdfUrl, label: 'Download PDF Resource', external: false, download: true }]
       : []),
+    ...(project.content?.resourceDownloads?.map((resource) => ({
+      href: resource.url,
+      label: resource.label,
+      external: resource.external ?? false,
+      download: resource.download ?? true,
+    })) ?? []),
   ];
   const hasProjectLinks = projectLinks.length > 0;
 
@@ -92,14 +98,21 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         );
       case 'Strategy':
+        const strategyPreviewUrl = project.content?.previewUrl ?? project.content?.pdfUrl;
+        const isMarkdownPreview = strategyPreviewUrl?.toLowerCase().endsWith('.md');
+
         return (
           <div className="w-full">
             <div className="w-full aspect-[1/1.4] bg-surface border border-border relative overflow-hidden shadow-2xl">
-              {project.content?.pdfUrl ? (
+              {strategyPreviewUrl ? (
                 <iframe 
-                  src={`${project.content.pdfUrl}#toolbar=0`} 
+                  src={
+                    isMarkdownPreview
+                      ? strategyPreviewUrl
+                      : `${strategyPreviewUrl}#toolbar=0&navpanes=0&scrollbar=0`
+                  }
                   className="w-full h-full border-none"
-                  title={`${project.title} PDF Preview`}
+                  title={`${project.title} Preview`}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">

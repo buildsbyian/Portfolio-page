@@ -5,8 +5,10 @@ export interface ProjectContent {
   outcome: string;
   repoUrl?: string;
   makerWorldUrls?: { text: string; url: string }[];
+  resourceDownloads?: { label: string; url: string; external?: boolean; download?: boolean }[];
   images?: string[];
   pdfUrl?: string;
+  previewUrl?: string;
 }
 
 export interface Project {
@@ -81,5 +83,98 @@ export const projects: Project[] = [
       outcome: "Provides a structured pathway for operators to build MVPs independently.",
       pdfUrl: '/resources/ai-workbook.pdf'
     }
-  }
+  },
+  {
+    title: 'Lean Product Alignment Framework',
+    slug: 'lean-product-framework',
+    hook: 'A five-step system for solo AI builders who want to ship the right thing the first time--turning a raw idea into a buildable V1 without needing a product manager.',
+    stack: ['FRAMEWORK', 'PRODUCT STRATEGY', 'TEMPLATES'],
+    category: 'Strategy',
+    roleTag: 'Client Work',
+    content: {
+      problem: "Solo builders often start coding before knowing exactly what they are building, add features based on instinct rather than user need, and end up with a V1 that doesn't match the original vision.",
+      whatIBuilt: 'A structured, 5-step workflow (Capture, Echo + Sprinkle, Persona Snapshot, Freeze, Build + Show). It includes a blank template for immediate use and a completed real-world example (Blink) to reference.',
+      myRole: 'Created the full framework structure, documented each step, and packaged both reusable and example versions for immediate execution.',
+      outcome: 'Forces builders to lock their V1 scope, prevents over-building, and ensures the product can be clearly explained to anyone else.',
+      previewUrl: '/resources/lean-product-framework-fillable.pdf',
+      resourceDownloads: [
+        {
+          label: 'Download Fillable PDF',
+          url: '/resources/lean-product-framework-fillable.pdf',
+          download: true,
+        },
+        {
+          label: 'Download DOCX Version',
+          url: '/resources/lean-product-framework.docx',
+          download: true,
+        },
+      ],
+    },
+  },
+  {
+    title: 'UX UI and Product Crash Course',
+    slug: 'ux-ui-product-crash-course',
+    hook: 'A foundational primer for non-designers aiming to understand the core principles of creating intuitive and visually appealing digital products.',
+    stack: ['CRASH COURSE', 'DESIGN BASICS', 'SLIDE DECK'],
+    category: 'Strategy',
+    roleTag: 'Client Work',
+    content: {
+      problem: 'Developers and business operators often struggle to make their functional apps look professional and feel intuitive to the end-user.',
+      whatIBuilt: 'A condensed, actionable guide breaking down essential UX/UI heuristics, typography, layout fundamentals, and user flows.',
+      myRole: 'Designed and structured the crash course to translate design fundamentals into practical decisions non-designers can apply immediately.',
+      outcome: 'Empowers non-designers to make confident product decisions and build better, user-centric interfaces from day one.',
+      previewUrl: '/resources/ux-ui-product-crash-course.pdf',
+      resourceDownloads: [
+        {
+          label: 'Download PDF Resource',
+          url: '/resources/ux-ui-product-crash-course.pdf',
+          download: true,
+        },
+      ],
+    },
+  },
+  {
+    title: 'Cursor Ruleset',
+    slug: 'cursor-ruleset-resource',
+    hook: 'A custom configuration blueprint designed to optimize the output and coding standards of the Cursor AI code editor for modern development.',
+    stack: ['CODE CONFIG', 'AI TOOLING', 'DEVELOPER RESOURCE'],
+    category: 'Strategy',
+    roleTag: 'Client Work',
+    content: {
+      problem: "AI coding assistants can generate inconsistent, messy, or outdated code if they aren't given strict, project-specific boundaries and context.",
+      whatIBuilt: 'A comprehensive .cursorrules file that dictates styling, architecture preferences, and best practices for the AI to follow.',
+      myRole: 'Authored and iterated the ruleset architecture to enforce quality, consistency, and project-specific constraints.',
+      outcome: "Drastically reduces code review time and ensures all AI-generated code aligns perfectly with the project's technical standards.",
+      previewUrl: '/resources/cursor-ruleset.md',
+      resourceDownloads: [
+        {
+          label: 'Download Markdown Ruleset',
+          url: '/resources/cursor-ruleset.md',
+          download: true,
+        },
+      ],
+    },
+  },
+  {
+    title: 'Sourcing SOP',
+    slug: 'sourcing-sop',
+    hook: 'A step-by-step Standard Operating Procedure detailing the exact workflows for finding, vetting, and organizing high-quality targets.',
+    stack: ['SOP', 'OPERATIONS', 'INTERNAL DOC'],
+    category: 'Strategy',
+    roleTag: 'Client Work',
+    content: {
+      problem: 'Manual sourcing is highly repetitive, prone to human error, and lacks the standardization needed to scale operations efficiently.',
+      whatIBuilt: 'A clear, reproducible playbook that outlines the exact tools, search parameters, and data entry workflows needed for consistent sourcing.',
+      myRole: 'Designed and documented the full SOP workflow so new contributors can execute consistently without tribal knowledge.',
+      outcome: 'Streamlines the pipeline, allowing new team members or virtual assistants to onboard instantly and execute tasks flawlessly.',
+      previewUrl: '/resources/sourcing-sop.pdf',
+      resourceDownloads: [
+        {
+          label: 'Download SOP PDF',
+          url: '/resources/sourcing-sop.pdf',
+          download: true,
+        },
+      ],
+    },
+  },
 ];
