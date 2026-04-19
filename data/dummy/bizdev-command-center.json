@@ -19,7 +19,7 @@
     },
     {
       "id": "proj-blue-mesa-retail",
-      "name": "ASC",
+      "name": "BluePeak",
       "description": "",
       "priority": "medium",
       "status": "active",
@@ -36,7 +36,7 @@
     },
     {
       "id": "proj-ember-health",
-      "name": "Built",
+      "name": "ForgePath",
       "description": "",
       "priority": "medium",
       "status": "potential",
@@ -53,7 +53,7 @@
     },
     {
       "id": "proj-driftline-manufacturing",
-      "name": "Mede",
+      "name": "LumenGrid",
       "description": "",
       "priority": "high",
       "status": "potential",
@@ -70,7 +70,7 @@
     },
     {
       "id": "proj-signal-forge",
-      "name": "Subpop",
+      "name": "CinderLoop",
       "description": "",
       "priority": "low",
       "status": "on-hold",

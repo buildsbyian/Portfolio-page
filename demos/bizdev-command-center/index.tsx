@@ -33,6 +33,14 @@ const SANITIZED_TERM_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bApollo\b/gi, 'SummitArc'],
   [/\bWEX\b/gi, 'Northlane'],
   [/\bSchlegel\b/gi, 'Sterling'],
+  [/^\s*ASC\s*$/i, 'BluePeak'],
+  [/^\s*Built\s*$/i, 'ForgePath'],
+  [/^\s*Mede\s*$/i, 'LumenGrid'],
+  [/^\s*Subpop\s*$/i, 'CinderLoop'],
+  [/\bMatthew Rotondo\b/gi, 'Mason Rivera'],
+  [/\bEthan Orley\b/gi, 'Evan Norwood'],
+  [/\bNeil Granberry\b/gi, 'Nolan Gray'],
+  [/\bMitch Meiss\b/gi, 'Micah Voss'],
 ];
 
 function sanitizeDemoString(value: string) {
