@@ -24,6 +24,14 @@ const variantMap = {
   slideUp: slideUpVariants,
 } as const;
 
+const motionElements = {
+  div: motion.div,
+  section: motion.section,
+  article: motion.article,
+  li: motion.li,
+  span: motion.span,
+} as const;
+
 interface AnimateInProps {
   children: ReactNode;
   variant?: keyof typeof variantMap;
@@ -31,7 +39,7 @@ interface AnimateInProps {
   duration?: number;
   className?: string;
   once?: boolean;
-  as?: 'div' | 'section' | 'article' | 'li' | 'span';
+  as?: keyof typeof motionElements;
 }
 
 export default function AnimateIn({
@@ -43,7 +51,7 @@ export default function AnimateIn({
   once = true,
   as = 'div',
 }: AnimateInProps) {
-  const Component = motion.create(as);
+  const Component = motionElements[as];
   const variants = variantMap[variant];
 
   return (

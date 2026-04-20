@@ -37,18 +37,13 @@ const QUICK_ACTIONS = [
   { id: 'travel', label: 'Mark today as a travel day' },
 ] as const;
 
-function loadInitialState() {
-  if (typeof window === 'undefined') {
-    return createNutritionAssistantSeed();
-  }
-
+function loadStoredState(): NutritionAssistantDemoState | null {
+  if (typeof window === 'undefined') return null;
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored
-      ? (JSON.parse(stored) as NutritionAssistantDemoState)
-      : createNutritionAssistantSeed();
+    return stored ? (JSON.parse(stored) as NutritionAssistantDemoState) : null;
   } catch {
-    return createNutritionAssistantSeed();
+    return null;
   }
 }
 
@@ -115,16 +110,21 @@ function formatNutrientValue(nutrient: string, value: number, units: DisplayUnit
 }
 
 function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('en-US', {
+  return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-  });
+    timeZone: 'UTC',
+  }).format(new Date(value));
 }
 
 function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  return new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: 'UTC',
+  }).format(new Date(value));
 }
 
 function updateSession(
@@ -218,21 +218,28 @@ function buildAnalyticsSeries(logs: DemoFoodLog[], nutrient: string) {
 }
 
 export default function NutritionAssistantDemo() {
-  const [state, setState] = useState<NutritionAssistantDemoState>(loadInitialState);
+  const [state, setState] = useState<NutritionAssistantDemoState>(createNutritionAssistantSeed);
+  const [hydrated, setHydrated] = useState(false);
   const [selectedLog, setSelectedLog] = useState<DemoFoodLog | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<DemoRecipe | null>(null);
-  const [recipePreviewId, setRecipePreviewId] = useState<string | null>('recipe-soup');
   const [historyDate, setHistoryDate] = useState(TODAY);
+  const [analyticsTab, setAnalyticsTab] = useState<'overview' | 'details'>('overview');
   const [selectedAnalyticsNutrient, setSelectedAnalyticsNutrient] = useState('protein_g');
+  const [menuOpen, setMenuOpen] = useState(true);
 
   useEffect(() => {
+    const stored = loadStoredState();
+    if (stored) setState(stored);
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+  }, [state, hydrated]);
 
   const activeSession =
     state.chatSessions.find((session) => session.id === state.activeChatId) || state.chatSessions[0];
-  const previewRecipe =
-    state.recipes.find((recipe) => recipe.id === recipePreviewId) || state.recipes[0] || null;
   const todayLogs = useMemo(() => getTodayLogs(state.logs), [state.logs]);
   const todayTotals = useMemo(() => sumLogs(todayLogs), [todayLogs]);
   const historyDates = useMemo(
@@ -480,230 +487,297 @@ export default function NutritionAssistantDemo() {
 
   return (
     <div className="overflow-x-auto rounded-[18px] border border-[#d7dde8] bg-[#edf2f8] shadow-[0_28px_60px_-40px_rgba(15,23,42,0.45)]">
-      <div className="grid h-[860px] min-w-[1180px] grid-cols-[248px_minmax(0,1fr)] bg-white text-gray-900">
+      <div
+        className={`app-root h-[860px] overflow-hidden bg-white text-gray-900`}
+        style={{ 
+          fontFamily: 'Arial, Helvetica, sans-serif', 
+          zoom: 0.82,
+          display: 'grid',
+          gridTemplateColumns: '256px 1fr',
+          height: '860px',
+          maxHeight: '860px'
+        }}
+      >
         <aside className="sidebar flex h-full flex-col border-r border-gray-200 bg-white">
-          <div className="border-b border-gray-200 px-4 py-4">
-            <p className="text-xl font-semibold text-gray-800">NutriPal</p>
-            <p className="text-xs text-gray-400">Web App Demo</p>
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+            <h2 className="text-xl font-semibold text-gray-800">NutriPal</h2>
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
-
-          <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             <SidebarLink
               active={state.activePage === 'dashboard'}
               label="Dashboard"
-              onClick={() => setActivePage('dashboard')}
-            />
-            <SidebarLink
-              active={state.activePage === 'chat'}
-              label="Chat"
-              onClick={() => setActivePage('chat')}
-            />
-            <SidebarLink
-              active={state.activePage === 'history'}
-              label="History"
-              onClick={() => setActivePage('history')}
-            />
-            <SidebarLink
-              active={state.activePage === 'recipes'}
-              label="Saved Recipes"
-              onClick={() => setActivePage('recipes')}
+              onClick={() => {
+                setActivePage('dashboard');
+                setMenuOpen(false);
+              }}
             />
             <SidebarLink
               active={state.activePage === 'analytics'}
               label="Analytics"
-              onClick={() => setActivePage('analytics')}
+              onClick={() => {
+                setActivePage('analytics');
+                setMenuOpen(false);
+              }}
+            />
+            <SidebarLink
+              active={state.activePage === 'recipes'}
+              label="Saved Recipes"
+              onClick={() => {
+                setActivePage('recipes');
+                setMenuOpen(false);
+              }}
+            />
+            <SidebarLink
+              active={state.activePage === 'history'}
+              label="History"
+              onClick={() => {
+                setActivePage('history');
+                setMenuOpen(false);
+              }}
             />
             <SidebarLink
               active={state.activePage === 'settings'}
               label="Settings"
-              onClick={() => setActivePage('settings')}
+              onClick={() => {
+                setActivePage('settings');
+                setMenuOpen(false);
+              }}
             />
 
-            <div className="mt-4 border-t border-gray-200 pt-4">
-              <div className="mb-2 flex items-center justify-between px-3">
-                <span className="text-sm font-semibold text-gray-700">Chats</span>
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-1 px-3">
                 <button
                   type="button"
-                  onClick={createNewChat}
-                  className="rounded bg-green-600 px-2 py-0.5 text-xs font-medium text-white hover:bg-green-700"
+                  onClick={() => {
+                    setActivePage('chat');
+                    setMenuOpen(false);
+                  }}
+                  className={`text-sm font-semibold ${
+                    state.activePage === 'chat' ? 'text-blue-700' : 'text-gray-700 hover:text-blue-600'
+                  }`}
+                >
+                  Chats
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    createNewChat();
+                    setMenuOpen(false);
+                  }}
+                  className="px-2 py-0.5 bg-green-600 text-white rounded text-xs hover:bg-green-700"
+                  title="Start a new chat"
                 >
                   + New
                 </button>
               </div>
-              <div className="space-y-1">
+              <ul className="space-y-0.5 max-h-48 overflow-y-auto">
+                {state.chatSessions.length === 0 && (
+                  <li className="text-xs text-gray-400 px-3">No chats yet</li>
+                )}
                 {state.chatSessions.map((session) => (
-                  <button
-                    key={session.id}
-                    type="button"
-                    onClick={() =>
-                      setState((current) => ({
-                        ...current,
-                        activeChatId: session.id,
-                        activePage: 'chat',
-                      }))
-                    }
-                    className={`block w-full rounded-md px-3 py-2 text-left text-sm ${
-                      session.id === state.activeChatId
-                        ? 'bg-blue-100 font-semibold text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <span className="block truncate">{session.title}</span>
-                    <span className="block text-xs text-gray-400">{formatDateTime(session.updated_at)}</span>
-                  </button>
+                  <li key={session.id} className="group flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setState((current) => ({
+                          ...current,
+                          activeChatId: session.id,
+                          activePage: 'chat',
+                        }));
+                        setMenuOpen(false);
+                      }}
+                      className={`flex-1 text-left px-2 py-1 rounded text-sm ${
+                        session.id === state.activeChatId
+                          ? 'bg-blue-100 text-blue-700 font-semibold'
+                          : 'hover:bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      <span className="block truncate">{session.title}</span>
+                      <span className="block text-xs text-gray-400">{formatDateTime(session.updated_at)}</span>
+                    </button>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </nav>
         </aside>
 
-        <div className="grid min-w-0 grid-rows-[68px_minmax(0,1fr)]">
-          <header className="flex items-center justify-between border-b border-gray-200 bg-white px-5">
-            <h2 className="text-xl font-semibold text-gray-800">{getPageTitle(state.activePage)}</h2>
-            <button
-              type="button"
-              onClick={() => {
-                setState(createNutritionAssistantSeed());
-                setRecipePreviewId('recipe-soup');
-                setSelectedLog(null);
-                setSelectedRecipe(null);
-                setHistoryDate(TODAY);
-                setSelectedAnalyticsNutrient('protein_g');
-              }}
-              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Reset Demo
-            </button>
+        {/* Main Content Area */}
+        <div className="min-w-0 flex flex-col h-full bg-white border-l border-gray-100 overflow-hidden">
+          <div className="flex-1 flex flex-col mx-auto w-full max-w-7xl h-full min-h-0 overflow-hidden">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 p-4 z-10 flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800">{getPageTitle(state.activePage)}</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setState(createNutritionAssistantSeed());
+                  setSelectedLog(null);
+                  setSelectedRecipe(null);
+                  setHistoryDate(TODAY);
+                  setSelectedAnalyticsNutrient('protein_g');
+                  setAnalyticsTab('overview');
+                }}
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Reset Demo
+              </button>
+            </div>
           </header>
 
-          <main className="min-h-0 overflow-hidden bg-[#f6f8fb] p-4">
+          <div
+            className={`bg-white min-h-0 h-full ${
+              state.activePage === 'chat'
+                ? 'flex flex-1 min-h-0 overflow-hidden'
+                : 'flex-1 overflow-y-auto'
+            }`}
+          >
             {state.activePage === 'chat' ? (
-              <div className="grid h-full grid-cols-[minmax(0,1.08fr)_420px] gap-4">
-                <section className="grid min-h-0 grid-rows-[56px_minmax(0,1fr)_auto] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                  <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{activeSession.title}</p>
-                      <p className="text-xs text-gray-400">Linked chat thread with dashboard context</p>
-                    </div>
-                    <p className="text-xs font-medium text-gray-400">{formatDateTime(activeSession.updated_at)}</p>
-                  </div>
-
-                  <div className="min-h-0 space-y-4 overflow-y-auto bg-gray-50 p-4">
-                    {activeSession.messages.map((message) => (
-                      <ChatBubble
-                        key={message.id}
-                        message={message}
-                        units={state.profile.displayUnits}
-                        onViewLog={setSelectedLog}
-                        onViewRecipe={setSelectedRecipe}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="border-t border-gray-200 bg-white p-4">
-                    <div className="mb-3 flex flex-wrap gap-2">
-                      {QUICK_ACTIONS.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          onClick={() => handleQuickAction(action.id)}
-                          className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                        >
-                          {action.label}
-                        </button>
+              <div className="flex flex-row h-full min-h-0 w-full overflow-hidden">
+                {/* Left Panel (Chat) - 50% */}
+                <div className="flex h-full min-h-0 min-w-0 w-1/2 flex-col overflow-hidden border-r border-gray-200">
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-gray-100">
+                    <div className="flex-1 min-h-0 overflow-y-auto space-y-4 bg-gray-50 p-4">
+                      {activeSession.messages.map((message) => (
+                        <ChatBubble
+                          key={message.id}
+                          message={message}
+                          units={state.profile.displayUnits}
+                          onViewLog={setSelectedLog}
+                          onViewRecipe={setSelectedRecipe}
+                        />
                       ))}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        value=""
-                        readOnly
-                        placeholder="Typing is disabled in the portfolio demo. Use the preset actions above."
-                        className="flex-1 rounded-full border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-black placeholder:text-gray-500"
-                      />
-                      <button
-                        type="button"
-                        className="rounded-full bg-blue-600 px-5 py-2 text-white opacity-60"
-                        disabled
-                      >
-                        Send
-                      </button>
-                    </div>
-                  </div>
-                </section>
-
-                <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-4">
-                  <DashboardSummaryTable
-                    userGoals={state.goals}
-                    dailyTotals={todayTotals}
-                    units={state.profile.displayUnits}
-                  />
-                  <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                    <div className="border-b border-gray-200 px-4 py-3">
-                      <p className="text-sm font-semibold text-gray-900">Today&apos;s Log</p>
-                      <p className="text-xs text-gray-400">Matches the right-side dashboard panel from the source layout</p>
-                    </div>
-                    <div className="min-h-0 divide-y divide-gray-100 overflow-y-auto">
-                      {todayLogs.map((log) => (
+                    <div className="p-4 bg-white border-t border-gray-200 flex-shrink-0">
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        {QUICK_ACTIONS.map((action) => (
+                          <button
+                            key={action.id}
+                            type="button"
+                            onClick={() => handleQuickAction(action.id)}
+                            className="rounded-full border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                      <form className="flex items-center space-x-3" onSubmit={(e) => e.preventDefault()}>
+                        <input
+                          type="text"
+                          value=""
+                          readOnly
+                          placeholder="Typing is disabled in the portfolio demo. Use the preset actions above."
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-full text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                        />
                         <button
-                          key={log.id}
-                          type="button"
-                          onClick={() => setSelectedLog(log)}
-                          className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
+                          type="submit"
+                          disabled
+                          className="px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 transition-colors duration-200"
                         >
-                          <div>
-                            <p className="text-sm font-medium text-gray-800">{log.food_name}</p>
-                            <p className="text-xs text-gray-400">{formatTime(log.log_time)}</p>
-                          </div>
-                          <span className="text-sm font-semibold text-blue-600">
-                            {Math.round(log.calories)} kcal
-                          </span>
+                          Send
                         </button>
-                      ))}
+                      </form>
                     </div>
                   </div>
-                </section>
+                </div>
+
+                {/* Right Panel (Dashboard) - 50% */}
+                <div className="flex h-full min-h-0 min-w-0 w-1/2 flex-col overflow-hidden">
+                  <div className="flex-1 min-h-0 overflow-y-auto bg-gray-50 p-4">
+                    <DashboardSummaryTable
+                      userGoals={state.goals}
+                      dailyTotals={todayTotals}
+                      units={state.profile.displayUnits}
+                    />
+                  </div>
+                </div>
               </div>
             ) : null}
 
             {state.activePage === 'dashboard' ? (
-              <div className="grid h-full grid-cols-[minmax(0,1fr)_520px] gap-4">
-                <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                  <div className="border-b border-gray-200 px-4 py-3">
-                    <p className="text-sm font-semibold text-gray-900">Today&apos;s Log</p>
-                    <p className="text-xs text-gray-400">Clickable entries open the same detailed nutrient modal style as the source app.</p>
+              <div className="p-3 md:p-4 lg:p-6">
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
+                  {/* Left Panel: Today's Log */}
+                  <div className="lg:w-1/2 min-w-0 w-full">
+                    <h2 className="text-lg font-semibold text-blue-600 mb-4 px-1">Today&apos;s Log</h2>
+                    {todayLogs.length > 0 ? (
+                      <div className="bg-white border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200">
+                        {todayLogs.slice(0, 10).map((log) => (
+                          <button
+                            key={log.id}
+                            type="button"
+                            onClick={() => setSelectedLog(log)}
+                            className="block w-full text-left px-4 py-3 hover:bg-gray-50 focus:outline-none focus:bg-gray-50 transition-colors duration-150"
+                          >
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium text-gray-800 truncate">
+                                {log.food_name}
+                              </span>
+                              <div className="flex items-center gap-3 flex-shrink-0">
+                                <span className="text-sm font-semibold text-blue-600">
+                                  {Math.round(log.calories)} kcal
+                                </span>
+                                <span className="text-xs text-gray-400">
+                                  {formatTime(log.log_time)}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center p-6 border border-gray-200 rounded-lg bg-white">
+                        <p className="text-sm text-gray-500">No food logged yet today.</p>
+                        <button
+                          type="button"
+                          onClick={() => setActivePage('chat')}
+                          className="mt-2 inline-block px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200"
+                        >
+                          Go to Chat to Log
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <div className="min-h-0 divide-y divide-gray-100 overflow-y-auto">
-                    {todayLogs.map((log) => (
-                      <button
-                        key={log.id}
-                        type="button"
-                        onClick={() => setSelectedLog(log)}
-                        className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-gray-50"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-gray-800">{log.food_name}</p>
-                          <p className="text-xs text-gray-400">{formatTime(log.log_time)}</p>
-                        </div>
-                        <span className="text-sm font-semibold text-blue-600">
-                          {Math.round(log.calories)} kcal
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </section>
 
-                <section className="min-h-0">
-                  <DashboardSummaryTable
-                    userGoals={state.goals}
-                    dailyTotals={todayTotals}
-                    units={state.profile.displayUnits}
-                  />
-                </section>
+                  {/* Right Panel: Dashboard Summary */}
+                  <div className="lg:w-1/2 min-w-0 w-full overflow-x-auto">
+                    <DashboardSummaryTable
+                      userGoals={state.goals}
+                      dailyTotals={todayTotals}
+                      units={state.profile.displayUnits}
+                    />
+
+                    <div className="mt-6">
+                      <button
+                        type="button"
+                        onClick={() => setActivePage('analytics')}
+                        className="block w-full bg-gray-100 hover:bg-gray-200 rounded-lg p-4 text-center transition-colors"
+                      >
+                        <div className="flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                          </svg>
+                          <span className="ml-2 font-medium text-blue-600">View Nutrition Analytics</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : null}
 
             {state.activePage === 'history' ? (
-              <div className="grid h-full grid-cols-[280px_minmax(0,1fr)] gap-4">
+              <div className="grid h-full grid-cols-[280px_minmax(0,1fr)] gap-4 p-3 md:p-4 lg:p-6">
                 <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
                   <label className="mb-2 block text-sm font-medium text-gray-700">Logged Day</label>
                   <select
@@ -755,111 +829,151 @@ export default function NutritionAssistantDemo() {
             ) : null}
 
             {state.activePage === 'recipes' ? (
-              <div className="grid h-full grid-cols-[340px_minmax(0,1fr)] gap-4">
-                <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                  <div className="border-b border-gray-200 px-4 py-3">
-                    <p className="text-sm font-semibold text-gray-900">Saved Recipes</p>
-                    <p className="text-xs text-gray-400">Source-inspired recipe library with nutrition and ingredients</p>
-                  </div>
-                  <div className="min-h-0 space-y-2 overflow-y-auto p-3">
-                    {state.recipes.map((recipe) => (
-                      <button
-                        key={recipe.id}
-                        type="button"
-                        onClick={() => setRecipePreviewId(recipe.id)}
-                        className={`w-full rounded-lg border px-4 py-3 text-left transition ${
-                          previewRecipe?.id === recipe.id
-                            ? 'border-emerald-400 bg-emerald-50 shadow-sm'
-                            : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                        }`}
-                      >
-                        <p className="text-sm font-semibold text-gray-900">{recipe.recipe_name}</p>
-                        <p className="mt-1 text-xs text-gray-500">
-                          {recipe.servings} servings
-                          {recipe.serving_size ? ` • ${recipe.serving_size}` : ''}
-                        </p>
-                        <p className="mt-2 text-xs font-medium text-emerald-700">
-                          {Math.round(recipe.calories / recipe.servings)} kcal per serving
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                </section>
-
-                <section className="min-h-0 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                  {previewRecipe ? (
-                    <RecipeWorkspaceCard
-                      recipe={previewRecipe}
-                      goals={state.goals}
-                      units={state.profile.displayUnits}
-                      onLogRecipe={() => logRecipe(previewRecipe)}
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-gray-500">
-                      Select a recipe to inspect it.
-                    </div>
-                  )}
-                </section>
+              <div className="h-full overflow-y-auto p-3 md:p-4 lg:p-6">
+                <div className="mx-auto max-w-3xl space-y-3">
+                  {state.recipes.map((recipe) => (
+                    <button
+                      key={recipe.id}
+                      type="button"
+                      onClick={() => setSelectedRecipe(recipe)}
+                      className="w-full overflow-hidden rounded-lg border border-gray-200 bg-white px-5 py-4 text-left shadow-sm transition hover:shadow-md"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-lg font-medium text-gray-900">{recipe.recipe_name}</h3>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {recipe.servings} servings
+                            {recipe.serving_size ? ` • ${recipe.serving_size}` : ''}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="hidden rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 sm:inline-flex">
+                            {Math.round(recipe.calories / recipe.servings)} kcal
+                          </span>
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : null}
 
             {state.activePage === 'analytics' ? (
-              <div className="flex h-full flex-col gap-4">
-                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                  <p className="text-sm font-medium text-gray-500">Focus Item</p>
-                  <h3 className="mt-2 text-2xl font-semibold text-gray-900">Sodium control</h3>
-                  <p className="mt-2 max-w-3xl text-sm text-gray-600">
-                    Across the recent logs, sodium is the nutrient most likely to swing the day.
-                    That matches the real app&apos;s analytics intent: highlight the one lever worth
-                    caring about instead of flooding the user with noise.
-                  </p>
+              <div className="flex h-full flex-col gap-4 p-3 md:p-4 lg:p-6">
+                <div className="border-b border-gray-200">
+                  <nav className="-mb-px flex gap-8" aria-label="Tabs">
+                    <button
+                      type="button"
+                      onClick={() => setAnalyticsTab('overview')}
+                      className={`border-b-2 px-1 pb-3 text-sm font-medium ${
+                        analyticsTab === 'overview'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                      }`}
+                    >
+                      Overview
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAnalyticsTab('details')}
+                      className={`border-b-2 px-1 pb-3 text-sm font-medium ${
+                        analyticsTab === 'details'
+                          ? 'border-blue-500 text-blue-600'
+                          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                      }`}
+                    >
+                      Detailed View
+                    </button>
+                  </nav>
                 </div>
 
-                <div className="grid grid-cols-4 gap-4">
-                  {analyticsNutrients.map((nutrient) => {
-                    const series = buildAnalyticsSeries(state.logs, nutrient);
-                    const latest = series[series.length - 1]?.total || 0;
-                    const goal = state.goals.find((item) => item.nutrient === nutrient)?.target_value || 0;
-
-                    return (
-                      <button
-                        key={nutrient}
-                        type="button"
-                        onClick={() => setSelectedAnalyticsNutrient(nutrient)}
-                        className={`rounded-xl border bg-white p-4 text-left shadow-sm transition hover:shadow-md ${
-                          selectedAnalyticsNutrient === nutrient
-                            ? 'border-blue-500 ring-2 ring-blue-100'
-                            : 'border-gray-200'
-                        }`}
-                      >
-                        <p className="text-sm font-medium text-gray-600">
-                          {MASTER_NUTRIENT_MAP[nutrient]?.name || nutrient}
-                        </p>
-                        <p className="mt-1 text-2xl font-semibold text-gray-900">
-                          {formatNutrientValue(nutrient, latest, state.profile.displayUnits)}
-                        </p>
-                        <p className="mt-1 text-xs text-gray-400">
-                          Goal: {formatNutrientValue(nutrient, goal, state.profile.displayUnits)}
-                        </p>
-                        <MiniBarChart series={series.map((item) => item.total)} />
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="grid min-h-0 grid-cols-[minmax(0,1fr)_300px] gap-4">
-                  <section className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <div className="mb-4 flex items-center justify-between gap-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {MASTER_NUTRIENT_MAP[selectedAnalyticsNutrient]?.name || selectedAnalyticsNutrient} Trend
-                        </h3>
-                        <p className="text-sm text-gray-500">Recent day-by-day dummy history rendered like the source analytics page</p>
+                {analyticsTab === 'overview' ? (
+                  <div className="space-y-6">
+                    <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                      <div className="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="mt-0.5 h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01" />
+                        </svg>
+                        <div>
+                          <h3 className="text-sm font-medium text-amber-800">Primary Focus Area</h3>
+                          <p className="mt-1 text-sm text-amber-800/90">
+                            Sodium is the nutrient most likely to swing the day this week. That matches the original analytics logic: one clear lever instead of dashboard noise.
+                          </p>
+                        </div>
                       </div>
+                    </div>
+
+                    <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                      <h3 className="text-md mb-1 font-semibold text-gray-800">Weekly Targets Overview</h3>
+                      <p className="mb-6 text-xs text-gray-500">Normalized view (% of daily goal/limit)</p>
+                      <AnalyticsOverviewChart
+                        nutrients={analyticsNutrients}
+                        logs={state.logs}
+                        goals={state.goals}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-4">
+                      {analyticsNutrients.map((nutrient) => {
+                        const series = buildAnalyticsSeries(state.logs, nutrient);
+                        const latest = series[series.length - 1]?.total || 0;
+                        const goal = state.goals.find((item) => item.nutrient === nutrient)?.target_value || 0;
+
+                        return (
+                          <button
+                            key={nutrient}
+                            type="button"
+                            onClick={() => {
+                              setSelectedAnalyticsNutrient(nutrient);
+                              setAnalyticsTab('details');
+                            }}
+                            className={`cursor-pointer rounded-xl border bg-white p-4 text-left transition-all hover:shadow-md ${
+                              selectedAnalyticsNutrient === nutrient
+                                ? 'border-blue-500 ring-2 ring-blue-500 shadow-md'
+                                : 'border-gray-200'
+                            }`}
+                          >
+                            <div className="mb-2 flex items-start justify-between">
+                              <div>
+                                <h3 className="text-sm font-bold text-gray-800">
+                                  {MASTER_NUTRIENT_MAP[nutrient]?.name || nutrient}
+                                </h3>
+                                <p className="text-xs uppercase tracking-wide text-gray-500">
+                                  {state.goals.find((goalItem) => goalItem.nutrient === nutrient)?.goal_type === 'limit' ? 'Limit' : 'Goal'}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="mt-3">
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-xl font-extrabold text-gray-900">
+                                  {formatNutrientValue(nutrient, latest, state.profile.displayUnits)}
+                                </span>
+                                <span className="text-sm text-gray-500">
+                                  / {formatNutrientValue(nutrient, goal, state.profile.displayUnits)}
+                                </span>
+                              </div>
+                              <MiniBarChart series={series.map((item) => item.total)} />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                      <label htmlFor="analytics-select" className="mb-2 block text-sm font-medium text-gray-700">
+                        Detailed view for:
+                      </label>
                       <select
+                        id="analytics-select"
                         value={selectedAnalyticsNutrient}
                         onChange={(event) => setSelectedAnalyticsNutrient(event.target.value)}
-                        className="rounded-md border border-gray-300 px-3 py-2 text-sm text-black"
+                        className="block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-base text-gray-900"
                       >
                         {analyticsNutrients.map((nutrient) => (
                           <option key={nutrient} value={nutrient}>
@@ -868,52 +982,64 @@ export default function NutritionAssistantDemo() {
                         ))}
                       </select>
                     </div>
-                    <AnalyticsTrendChart
-                      nutrient={selectedAnalyticsNutrient}
-                      goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
-                      series={analyticsSeries}
-                      units={state.profile.displayUnits}
-                    />
-                  </section>
 
-                  <section className="grid min-h-0 grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">Selected Nutrient</p>
-                      <p className="mt-1 text-3xl font-semibold text-blue-600">
-                        {formatNutrientValue(
-                          selectedAnalyticsNutrient,
-                          analyticsSeries[analyticsSeries.length - 1]?.total || 0,
-                          state.profile.displayUnits
-                        )}
-                      </p>
-                      <p className="mt-1 text-xs text-gray-400">
-                        Goal {formatNutrientValue(
-                          selectedAnalyticsNutrient,
-                          state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0,
-                          state.profile.displayUnits
-                        )}
-                      </p>
+                    <div className="grid grid-cols-3 gap-4">
+                      <AnalyticsStatCard
+                        label="Today"
+                        value={analyticsSeries[analyticsSeries.length - 1]?.total || 0}
+                        nutrient={selectedAnalyticsNutrient}
+                        goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
+                        units={state.profile.displayUnits}
+                      />
+                      <AnalyticsStatCard
+                        label="Weekly Average"
+                        value={
+                          analyticsSeries.reduce((sum, point) => sum + point.total, 0) /
+                          Math.max(analyticsSeries.length, 1)
+                        }
+                        nutrient={selectedAnalyticsNutrient}
+                        goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
+                        units={state.profile.displayUnits}
+                      />
+                      <AnalyticsStatCard
+                        label="Monthly Average"
+                        value={
+                          analyticsSeries.reduce((sum, point) => sum + point.total, 0) /
+                          Math.max(analyticsSeries.length, 1)
+                        }
+                        nutrient={selectedAnalyticsNutrient}
+                        goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
+                        units={state.profile.displayUnits}
+                      />
                     </div>
-                    <div className="mt-4 rounded-lg bg-blue-50 p-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-blue-800">Last recorded points</p>
+
+                    <div className="grid min-h-0 grid-cols-2 gap-6">
+                      <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                        <h4 className="mb-4 text-md font-medium text-gray-600">Last 7 Days Trend</h4>
+                        <AnalyticsTrendChart
+                          nutrient={selectedAnalyticsNutrient}
+                          goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
+                          series={analyticsSeries.slice(-7)}
+                          units={state.profile.displayUnits}
+                        />
+                      </section>
+                      <section className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                        <h4 className="mb-4 text-md font-medium text-gray-600">Last 30 Days Trend</h4>
+                        <AnalyticsTrendChart
+                          nutrient={selectedAnalyticsNutrient}
+                          goal={state.goals.find((item) => item.nutrient === selectedAnalyticsNutrient)?.target_value || 0}
+                          series={analyticsSeries}
+                          units={state.profile.displayUnits}
+                        />
+                      </section>
                     </div>
-                    <div className="min-h-0 space-y-2 overflow-y-auto pt-3">
-                      {analyticsSeries.map((point) => (
-                        <div key={point.date} className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2">
-                          <span className="text-sm font-medium text-gray-700">{point.short}</span>
-                          <span className="text-sm font-semibold text-gray-900">
-                            {formatNutrientValue(selectedAnalyticsNutrient, point.total, state.profile.displayUnits)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
+                  </div>
+                )}
               </div>
             ) : null}
 
             {state.activePage === 'settings' ? (
-              <div className="grid h-full grid-cols-[minmax(0,1fr)_360px] gap-4">
+              <div className="grid h-full grid-cols-[minmax(0,1fr)_360px] gap-4 p-3 md:p-4 lg:p-6">
                 <div className="space-y-4">
                   <SimpleCard title="Display Units" subtitle="This matches the real settings page behavior.">
                     <div className="space-y-4">
@@ -998,9 +1124,10 @@ export default function NutritionAssistantDemo() {
                 </SimpleCard>
               </div>
             ) : null}
-          </main>
+          </div>
         </div>
       </div>
+    </div>
 
       {selectedLog ? (
         <FoodLogDetailModal
@@ -1012,7 +1139,7 @@ export default function NutritionAssistantDemo() {
         />
       ) : null}
 
-      {selectedRecipe && state.activePage !== 'recipes' ? (
+      {selectedRecipe ? (
         <RecipeDetailModal
           recipe={selectedRecipe}
           goals={state.goals}
@@ -1038,8 +1165,8 @@ function SidebarLink({
     <button
       type="button"
       onClick={onClick}
-      className={`block w-full rounded-md px-3 py-2 text-left ${
-        active ? 'bg-blue-50 font-medium text-blue-700' : 'text-gray-600 hover:bg-gray-100'
+      className={`block w-full px-3 py-2 rounded-md text-left ${
+        active ? 'bg-blue-50 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-100'
       }`}
     >
       {label}
@@ -1098,13 +1225,18 @@ function ChatBubble({
   const isUser = message.sender === 'user';
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group relative`}>
       <div
-        className={`max-w-[92%] rounded-lg px-4 py-3 shadow ${
-          isUser ? 'bg-blue-500 text-white' : 'border border-gray-200 bg-white text-gray-900'
-        }`}
+        className={`max-w-xs md:max-w-md lg:max-w-lg px-4 py-2 rounded-lg shadow relative`}
+        style={{ 
+          backgroundColor: isUser ? '#3b82f6' : '#ffffff',
+          color: isUser ? '#ffffff' : '#0f172a',
+          border: isUser ? 'none' : '1px solid #e2e8f0'
+        }}
       >
-        <div className="whitespace-pre-line text-sm font-medium leading-relaxed">{message.text}</div>
+        <div className="break-words whitespace-pre-line text-sm font-medium leading-relaxed">
+          {message.text}
+        </div>
 
         {!isUser && message.metadata?.nutrition?.length ? (
           <div className="mt-3 border-t border-gray-100 pt-3">
@@ -1536,121 +1668,139 @@ function RecipeDetailModal({
   );
 }
 
-function RecipeWorkspaceCard({
-  recipe,
+function AnalyticsOverviewChart({
+  nutrients,
+  logs,
   goals,
-  units,
-  onLogRecipe,
 }: {
-  recipe: DemoRecipe;
+  nutrients: string[];
+  logs: DemoFoodLog[];
   goals: DemoGoal[];
-  units: DisplayUnits;
-  onLogRecipe: () => void;
 }) {
-  const perServing =
-    recipe.per_serving_nutrition ||
-    Object.fromEntries(
-      Object.entries(recipe.nutrition_data || {}).map(([key, value]) => [key, value / recipe.servings])
-    );
+  const width = 900;
+  const height = 300;
+  const paddingLeft = 40;
+  const paddingRight = 20;
+  const paddingTop = 20;
+  const paddingBottom = 40;
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  const baseSeries = buildAnalyticsSeries(logs, nutrients[0]).slice(-7);
+  const maxPercent = Math.max(
+    100,
+    ...nutrients.flatMap((nutrient) => {
+      const goal = goals.find((item) => item.nutrient === nutrient)?.target_value || 1;
+      return buildAnalyticsSeries(logs, nutrient)
+        .slice(-7)
+        .map((point) => (point.total / goal) * 100);
+    })
+  );
+  const colors = ['#3b82f6', '#8b5cf6', '#ef4444', '#10b981'];
 
-  const tracked = goals
-    .filter((goal) => goal.nutrient !== 'calories')
-    .map((goal) => ({
-      key: goal.nutrient,
-      label: MASTER_NUTRIENT_MAP[goal.nutrient]?.name || goal.nutrient,
-      value: (perServing[goal.nutrient] as number | undefined) || 0,
-    }));
+  const lines = nutrients.map((nutrient, index) => {
+    const goal = goals.find((item) => item.nutrient === nutrient)?.target_value || 1;
+    const points = buildAnalyticsSeries(logs, nutrient)
+      .slice(-7)
+      .map((point, pointIndex, array) => {
+        const x =
+          array.length === 1
+            ? paddingLeft + chartWidth / 2
+            : paddingLeft + (pointIndex / (array.length - 1)) * chartWidth;
+        const percent = (point.total / goal) * 100;
+        const y = paddingTop + chartHeight - (percent / maxPercent) * chartHeight;
+        return { ...point, x, y, percent };
+      });
+
+    return { nutrient, color: colors[index % colors.length], points, goal };
+  });
 
   return (
-    <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
-      <div className="border-b border-gray-200 px-5 py-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-900">{recipe.recipe_name}</p>
-            <p className="mt-1 text-xs text-gray-400">
-              {recipe.servings} servings
-              {recipe.serving_size ? ` • ${recipe.serving_size}` : ''}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-2xl font-black tracking-tight text-emerald-600">
-              {formatEnergy((perServing.calories as number) || recipe.calories / recipe.servings, units)}
-            </p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Per serving</p>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-3">
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-[240px] w-full">
+        {[0, maxPercent * 0.5, maxPercent].map((tick) => {
+          const y = paddingTop + chartHeight - (tick / maxPercent) * chartHeight;
+          return (
+            <g key={tick}>
+              <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="#f3f4f6" strokeDasharray="3 3" />
+              <text x={6} y={y + 4} className="fill-gray-400 text-[11px]">
+                {Math.round(tick)}%
+              </text>
+            </g>
+          );
+        })}
+        <line
+          x1={paddingLeft}
+          y1={paddingTop + chartHeight - (100 / maxPercent) * chartHeight}
+          x2={width - paddingRight}
+          y2={paddingTop + chartHeight - (100 / maxPercent) * chartHeight}
+          stroke="#94a3b8"
+          strokeDasharray="4 4"
+        />
 
-      <div className="min-h-0 overflow-y-auto px-5 py-4">
-        {recipe.description ? (
-          <p className="mb-6 border-l-2 border-emerald-100 pl-3 text-sm italic leading-relaxed text-gray-600">
-            {recipe.description}
-          </p>
-        ) : null}
+        {lines.map((line) => {
+          const path = line.points
+            .map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`)
+            .join(' ');
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Ingredients</span>
-            <div className="mt-3 space-y-2">
-              {recipe.recipe_ingredients?.map((ingredient) => (
-                <div
-                  key={`${recipe.id}-${ingredient.ingredient_name}`}
-                  className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-2"
-                >
-                  <span className="block text-sm font-semibold text-gray-800">
-                    {ingredient.ingredient_name}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {ingredient.quantity} {ingredient.unit}
-                  </span>
-                </div>
-              )) || (
-                <div className="rounded-lg border border-gray-100 bg-gray-50 px-3 py-3 text-sm text-gray-600">
-                  {recipe.ingredients}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Tracked Nutrition</span>
-            <div className="mt-3 space-y-2">
-              {tracked.map((item) => (
-                <div
-                  key={item.key}
-                  className="rounded-lg border border-gray-100 bg-white px-3 py-2 shadow-sm"
-                >
-                  <span className="text-[10px] font-semibold uppercase tracking-tight text-gray-400">
-                    {item.label}
-                  </span>
-                  <span className="mt-1 block text-sm font-black text-gray-800">
-                    {formatNutrientValue(item.key, item.value, units)}
-                  </span>
-                </div>
+          return (
+            <g key={line.nutrient}>
+              <path d={path} fill="none" stroke={line.color} strokeWidth="2.5" strokeLinecap="round" />
+              {line.points.map((point) => (
+                <circle key={`${line.nutrient}-${point.date}`} cx={point.x} cy={point.y} r="3.5" fill={line.color} />
               ))}
-            </div>
+            </g>
+          );
+        })}
+
+        {baseSeries.map((point, index) => {
+          const x =
+            baseSeries.length === 1
+              ? paddingLeft + chartWidth / 2
+              : paddingLeft + (index / (baseSeries.length - 1)) * chartWidth;
+          return (
+            <text key={point.date} x={x} y={height - 12} textAnchor="middle" className="fill-gray-500 text-[11px]">
+              {new Date(`${point.date}T00:00:00`).toLocaleDateString('en-US', { weekday: 'short' })}
+            </text>
+          );
+        })}
+      </svg>
+
+      <div className="flex flex-wrap gap-4 text-xs">
+        {lines.map((line) => (
+          <div key={line.nutrient} className="inline-flex items-center gap-2 text-gray-600">
+            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: line.color }} />
+            <span>{MASTER_NUTRIENT_MAP[line.nutrient]?.name || line.nutrient}</span>
           </div>
+        ))}
+        <div className="inline-flex items-center gap-2 text-gray-500">
+          <span className="h-[2px] w-4 bg-slate-400" />
+          <span>Target (100%)</span>
         </div>
-
-        {recipe.instructions ? (
-          <div className="mt-8 border-t border-gray-100 pt-6">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Instructions</span>
-            <div className="mt-3 whitespace-pre-wrap rounded-lg border border-gray-100 bg-gray-50/70 p-4 text-sm leading-relaxed text-gray-600">
-              {recipe.instructions}
-            </div>
-          </div>
-        ) : null}
       </div>
+    </div>
+  );
+}
 
-      <div className="border-t border-gray-100 bg-gray-50/70 px-5 py-4">
-        <button
-          type="button"
-          onClick={onLogRecipe}
-          className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-700"
-        >
-          Log Recipe
-        </button>
-      </div>
+function AnalyticsStatCard({
+  label,
+  value,
+  nutrient,
+  goal,
+  units,
+}: {
+  label: string;
+  value: number;
+  nutrient: string;
+  goal: number;
+  units: DisplayUnits;
+}) {
+  const percent = goal > 0 ? Math.round((value / goal) * 100) : 0;
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+      <h4 className="mb-1 text-sm font-medium text-gray-500">{label}</h4>
+      <p className="text-xl font-semibold text-gray-900">{formatNutrientValue(nutrient, value, units)}</p>
+      <p className="text-sm text-gray-600">({percent}% of goal)</p>
     </div>
   );
 }
