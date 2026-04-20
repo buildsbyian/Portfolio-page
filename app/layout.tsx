@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { Inter, DM_Mono } from 'next/font/google';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { LayoutProvider } from '@/components/ui/LayoutProvider';
-import LayoutSwitcher from '@/components/ui/LayoutSwitcher';
 import './globals.css';
 
 const inter = Inter({
@@ -52,12 +50,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <LayoutProvider>
-          <Navbar />
-          <main>{children}</main>
-          <LayoutSwitcher />
-          <Footer />
-        </LayoutProvider>
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import PageHero from '@/components/ui/PageHero';
 import Tag from '@/components/ui/Tag';
+import NutritionAssistantDemo from '@/demos/ai-nutrition-assistant';
 import BizDevCommandCenterDemo from '@/demos/bizdev-command-center';
 import { projects } from '@/data/projects';
 
@@ -30,7 +31,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const isSoftware = project.category === 'Software';
-  const isWideDemo = project.slug === 'bizdev-command-center';
+  const isWideDemo =
+    project.slug === 'bizdev-command-center' || project.slug === 'ai-nutrition-assistant';
   const projectLinks = [
     ...(project.content?.repoUrl
       ? [{ href: project.content.repoUrl, label: 'View GitHub Repo', external: true }]
@@ -57,6 +59,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       case 'Software':
         if (project.slug === 'bizdev-command-center') {
           return <BizDevCommandCenterDemo />;
+        }
+
+        if (project.slug === 'ai-nutrition-assistant') {
+          return <NutritionAssistantDemo />;
         }
 
         return (

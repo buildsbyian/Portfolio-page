@@ -8,47 +8,17 @@ import Tag from '@/components/ui/Tag';
 import { projects, Project } from '@/data/projects';
 
 const categoryTagVariant = {
-  Software: 'accent' as const,
+  Software: 'default' as const,
   Hardware: 'default' as const,
   Strategy: 'default' as const,
 };
 
-import { useLayout } from '@/components/ui/LayoutProvider';
-
 export default function FeaturedWork() {
-  const { layout } = useLayout();
-
-  const getGridClasses = () => {
-    switch (layout) {
-      case 'standard':
-        return 'flex flex-col gap-8';
-      case 'screenshot':
-        return 'grid grid-cols-1 md:grid-cols-3 gap-5';
-      case 'bento':
-        return 'grid grid-cols-1 md:grid-cols-4 gap-4';
-      case 'split':
-        return 'flex flex-col gap-6';
-      default:
-        return 'grid grid-cols-1 md:grid-cols-5 gap-5';
-    }
-  };
-
   const getCardProps = (index: number) => {
-    if (layout === 'standard' || layout === 'split') {
-      return { className: 'w-full', large: index === 0 };
+    if (index === 0) {
+      return { className: 'md:col-span-2 md:row-span-2', large: true };
     }
-    
-    if (layout === 'screenshot') {
-      if (index === 0) return { className: 'md:col-span-2 md:row-span-2', large: true };
-      return { className: 'md:col-span-1 h-full', large: false };
-    }
-    
-    if (layout === 'bento') {
-      if (index === 0) return { className: 'md:col-span-2 md:row-span-2', large: true };
-      return { className: 'md:col-span-2 h-full', large: false };
-    }
-    
-    if (index === 0) return { className: 'md:col-span-3 md:row-span-2', large: true };
+
     return { className: 'md:col-span-2 h-full', large: false };
   };
 
@@ -59,11 +29,11 @@ export default function FeaturedWork() {
           <SectionLabel>Selected Work</SectionLabel>
         </AnimateIn>
 
-        <StaggerContainer className={getGridClasses()}>
+        <StaggerContainer className="grid grid-cols-1 gap-4 md:grid-cols-4 md:auto-rows-[minmax(240px,auto)] md:items-stretch">
           {projects.filter(p => p.featured).slice(0, 3).map((project, index) => {
             const props = getCardProps(index);
             return (
-              <AnimateIn key={index} className={props.className}>
+              <AnimateIn key={project.slug} className={props.className}>
                 <ProjectCard project={project} large={props.large} />
               </AnimateIn>
             );
@@ -83,6 +53,7 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
   const isPlaceholder = project.slug === '#';
   const highlightImage = project.content?.images?.[0];
   const useMediaLayout = large && project.category !== 'Software';
+  const titleClassName = 'font-display text-text-primary leading-tight tracking-[-0.02em] text-2xl md:text-[2rem]';
 
   const cardContent = large ? (
     <div className="group relative theme-card h-full min-h-[360px] flex flex-col overflow-hidden">
@@ -108,14 +79,14 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
         </div>
       ) : null}
 
-      <div className="flex-1 p-8 flex flex-col justify-between">
-        <div className="mb-6">
+      <div className="flex-1 p-6 md:p-8 flex flex-col gap-5">
+        <div>
           <Tag variant={categoryTagVariant[project.category]}>
             {project.category}
           </Tag>
         </div>
-        <div className="flex-1 flex flex-col justify-end">
-          <h3 className="font-display text-text-primary mb-3 leading-tight text-2xl md:text-3xl">
+        <div className="flex flex-1 flex-col justify-end">
+          <h3 className={`${titleClassName} mb-3`}>
             {project.title}
           </h3>
           <p className="font-mono text-xs text-text-secondary leading-relaxed mb-4 max-w-md">
@@ -135,9 +106,9 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
       </div>
     </div>
   ) : (
-    <div className="group relative theme-card p-8 h-full min-h-[240px] flex flex-col justify-between">
+    <div className="group relative theme-card p-6 md:p-8 h-full min-h-[240px] flex flex-col">
       {/* Top: category tag */}
-      <div className="mb-6">
+      <div className="mb-5">
         <Tag variant={categoryTagVariant[project.category]}>
           {project.category}
         </Tag>
@@ -145,7 +116,7 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
 
       {/* Middle: title + hook */}
       <div className="flex-1 flex flex-col justify-end">
-        <h3 className="font-display text-text-primary mb-3 leading-tight text-xl">
+        <h3 className={`${titleClassName} mb-3`}>
           {project.title}
         </h3>
         <p className="font-mono text-xs text-text-secondary leading-relaxed mb-4 max-w-md">
@@ -172,7 +143,7 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
   }
 
   return (
-    <Link href={`/work/${project.slug}`} className="block">
+    <Link href={`/work/${project.slug}`} className="block h-full">
       {cardContent}
     </Link>
   );

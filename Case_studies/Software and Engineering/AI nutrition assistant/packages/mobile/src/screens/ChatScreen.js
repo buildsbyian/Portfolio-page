@@ -1,0 +1,732 @@
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+  Alert
+} from 'react-native';
+import {
+  TextInput as PaperTextInput,
+  IconButton,
+  Text as PaperText,
+  ActivityIndicator,
+  Card,
+  Paragraph,
+  Surface,
+  Caption,
+  Button,
+} from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../context/AuthContext';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { fetchUserProfile, fetchGoalRecommendations } from '../utils/profileUtils';
+import { getSupabaseClient } from 'shared';
+import useSafeTheme from '../hooks/useSafeTheme';
+
+const NutritionCard = ({ nutrition, theme }) => {
+  if (!nutrition || !Array.isArray(nutrition) || nutrition.length === 0) return null;
+
+  // Calculate totals if multiple items
+  const totals = nutrition.reduce((acc, item) => ({
+    calories: acc.calories + (item.calories || 0),
+    protein: acc.protein + (item.protein_g || 0),
+    carbs: acc.carbs + (item.carbs_g || 0),
+    fat: acc.fat + (item.fat_total_g || 0),
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+  return (
+    <Surface style={[styles.nutritionCard, { backgroundColor: theme.colors.elevation.level2 }]} elevation={2}>
+      <View style={styles.cardHeader}>
+        <PaperText style={styles.cardTitle}>Nutrition Summary</PaperText>
+        <View style={styles.calorieBadge}>
+          <PaperText style={styles.calorieValue}>{Math.round(totals.calories)}</PaperText>
+          <PaperText style={styles.calorieUnit}>kcal</PaperText>
+        </View>
+      </View>
+
+      <View style={styles.macroGrid}>
+        <View style={[styles.macroPill, { backgroundColor: '#E8F5E9' }]}>
+          <PaperText style={[styles.macroLabel, { color: '#2E7D32' }]}>Protein</PaperText>
+          <PaperText style={[styles.macroValue, { color: '#2E7D32' }]}>{Math.round(totals.protein)}g</PaperText>
+        </View>
+        <View style={[styles.macroPill, { backgroundColor: '#E3F2FD' }]}>
+          <PaperText style={[styles.macroLabel, { color: '#1565C0' }]}>Carbs</PaperText>
+          <PaperText style={[styles.macroValue, { color: '#1565C0' }]}>{Math.round(totals.carbs)}g</PaperText>
+        </View>
+        <View style={[styles.macroPill, { backgroundColor: '#FFF3E0' }]}>
+          <PaperText style={[styles.macroLabel, { color: '#E65100' }]}>Fat</PaperText>
+          <PaperText style={[styles.macroValue, { color: '#E65100' }]}>{Math.round(totals.fat)}g</PaperText>
+        </View>
+      </View>
+
+      {nutrition.length > 1 && (
+        <View style={styles.ingredientsList}>
+          {nutrition.map((item, idx) => (
+            <View key={idx} style={styles.ingredientRow}>
+              <PaperText style={styles.ingredientName} numberOfLines={1}>• {item.food_name}</PaperText>
+              <PaperText style={styles.ingredientCals}>{Math.round(item.calories)} kcal</PaperText>
+            </View>
+          ))}
+        </View>
+      )}
+    </Surface>
+  );
+};
+
+const ChatScreen = () => {
+  const theme = useSafeTheme();
+  const { user, session } = useAuth();
+  const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState('');
+  const [isAiThinking, setIsAiThinking] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
+  const [isFetchingRecommendations, setIsFetchingRecommendations] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [isSending, setIsSending] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
+
+  const flatListRef = useRef(null);
+  const netInfo = useNetInfo();
+
+  useEffect(() => {
+    setMessages([
+      {
+        id: '0',
+        text: "Hi! I'm NutriPal, your nutrition assistant. I can help you log your meals, analyze recipes, and answer nutrition questions.",
+        sender: 'ai'
+      }
+    ]);
+  }, []);
+
+  useEffect(() => {
+    const initSession = async () => {
+      if (!user) return;
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from('chat_sessions')
+        .select('id, title')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (data && data.length > 0) {
+        setSessionId(data[0].id);
+      } else {
+        const { data: newSession, error: createError } = await supabase
+          .from('chat_sessions')
+          .insert([{ user_id: user.id, title: 'Mobile Chat' }])
+          .select('id')
+          .single();
+        if (newSession) setSessionId(newSession.id);
+      }
+    };
+    initSession();
+  }, [user]);
+
+  useEffect(() => {
+    if (messages.length > 0 && flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    setIsOffline(netInfo.isConnected === false);
+    if (netInfo.isConnected === false) {
+      // Optionally show an alert or banner when offline
+      // Alert.alert("Offline", "You are currently offline. Chat functionality may be limited.");
+    }
+  }, [netInfo.isConnected]);
+
+  const triggerRecommendationFetch = async () => {
+    setIsFetchingRecommendations(true);
+    let fetchingMessageId = null;
+
+    try {
+      // Add a temporary "Fetching..." message
+      fetchingMessageId = (Date.now() + 3).toString();
+      const fetchingMessage = {
+        id: fetchingMessageId,
+        text: "Fetching recommendations...",
+        sender: 'ai',
+        isLoading: true
+      };
+      setMessages(prevMessages => [...prevMessages, fetchingMessage]);
+
+      // 1. Fetch user profile
+      const { data: profileData, error: profileError } = await fetchUserProfile(user.id);
+
+      if (profileError || !profileData) {
+        throw new Error(profileError?.message || 'Could not load your profile.');
+      }
+      if (!profileData.age || !profileData.weight_kg || !profileData.height_cm || !profileData.sex) {
+        throw new Error('Your profile is incomplete. Please update it in Settings.');
+      }
+
+      // 2. Fetch recommendations using the profile
+      const { data: recData, error: recError } = await fetchGoalRecommendations(profileData);
+
+      if (recError) {
+        throw new Error(recError.message || 'Failed to fetch recommendations.');
+      }
+
+      // Remove the temporary fetching message
+      setMessages(prevMessages => prevMessages.filter(msg => msg.id !== fetchingMessageId));
+
+      // Add success message
+      const successMessage = {
+        id: (Date.now() + 4).toString(),
+        text: "Recommendations generated! You can find them as placeholders in the Goal Settings screen.",
+        sender: 'ai',
+      };
+      setMessages(prevMessages => [...prevMessages, successMessage]);
+
+    } catch (error) {
+      console.error('Error triggering recommendation fetch:', error);
+      // Remove the temporary fetching message
+      setMessages(prevMessages => prevMessages.filter(msg => msg.id !== fetchingMessageId));
+      // Add error message
+      const errorMessage = {
+        id: (Date.now() + 4).toString(),
+        text: `Error fetching recommendations: ${error.message}`,
+        sender: 'ai',
+        isError: true,
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+    } finally {
+      setIsFetchingRecommendations(false);
+    }
+  };
+
+  const handleSend = useCallback(async () => {
+    if (!inputText.trim() || isSending || isFetchingRecommendations || isAiThinking) {
+      if (isOffline) {
+        Alert.alert("Offline", "Cannot send messages while offline.");
+      }
+      return;
+    }
+
+    console.log('Send attempt - Auth state:', {
+      hasUser: !!user,
+      hasSession: !!session,
+      hasToken: !!session?.access_token,
+    });
+
+    const userMessageText = inputText.trim();
+    const userMessage = {
+      id: Date.now().toString(),
+      text: userMessageText,
+      sender: 'user',
+    };
+
+    setMessages(prevMessages => [...prevMessages, userMessage]);
+    setInputText('');
+    setIsAiThinking(true);
+    setIsSending(true);
+
+    try {
+      if (!session?.access_token) {
+        throw new Error('Authentication token not found.');
+      }
+
+      const supabase = getSupabaseClient();
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      const { data: response, error: funcError } = await supabase.functions.invoke('chat-handler', {
+        body: {
+          message: userMessageText,
+          session_id: sessionId,
+          timezone
+        }
+      });
+
+      if (funcError) throw funcError;
+
+      const aiMessage = {
+        id: (Date.now() + 2).toString(),
+        text: response.message,
+        sender: 'ai',
+        responseType: response.response_type,
+        data: response.data
+      };
+      setMessages(prevMessages => [...prevMessages, aiMessage]);
+
+      setPendingAction(null);
+      setPendingAction(null);
+      setIsAiThinking(false);
+      setIsSending(false);
+
+    } catch (error) {
+      console.error('Error in handleSend:', error);
+      const errorMessage = {
+        id: (Date.now() + 3).toString(),
+        text: `Sorry, something went wrong: ${error.message}`,
+        sender: 'ai',
+        isError: true,
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      setPendingAction(null);
+    } finally {
+      setIsAiThinking(false);
+      setIsSending(false);
+    }
+  }, [inputText, isSending, isFetchingRecommendations, isAiThinking, session, pendingAction, contextForNextRequest, isOffline]);
+
+  const renderMessageItem = ({ item }) => {
+    const isUser = item.sender === 'user';
+
+    // Base styles from StyleSheet
+    const messageContainerBaseStyle = styles.messageContainer;
+    const messageSpecificBaseStyle = isUser ? styles.userMessage : styles.aiMessage;
+    const textContainerStyle = styles.textContainer;
+    const textBaseStyle = styles.baseMessageText; // New base style for text
+    const thinkingStyle = item.isLoading ? styles.thinkingText : {};
+    const errorStyle = item.isError ? styles.errorText : {};
+
+    // Theme-dependent inline styles
+    const messageContainerInlineStyle = {
+      backgroundColor: isUser ? theme.colors.primary : theme.colors.surface,
+      borderColor: item.isError ? theme.colors.error : (isUser ? theme.colors.primary : theme.colors.outline),
+      borderWidth: item.isError || item.sender === 'ai' ? 1 : 0, // Border for AI or errors
+    };
+    const textInlineStyle = {
+      color: isUser ? theme.colors.onPrimary : (item.isError ? theme.colors.error : theme.colors.text)
+    };
+    const thinkingInlineStyle = { color: theme.colors.textSecondary }; // Apply thinking color inline
+    const errorInlineStyle = { color: theme.colors.error }; // Apply error color inline
+
+    // Combine base and inline styles
+    const combinedContainerStyle = [messageContainerBaseStyle, messageSpecificBaseStyle, messageContainerInlineStyle];
+    const combinedTextStyle = [textBaseStyle, textInlineStyle, item.isLoading ? thinkingInlineStyle : {}, item.isError ? errorInlineStyle : {}];
+
+    const isFoodConfirmation = item.sender === 'ai' && item.responseType === 'confirmation_food_log';
+    const isRecipeSaveConfirmation = item.sender === 'ai' && item.responseType === 'confirmation_recipe_save';
+    const isRecipeNotFound = item.sender === 'ai' && item.responseType === 'recipe_not_found';
+
+    const handleConfirmation = (confirmationMessage) => {
+      setInputText(confirmationMessage);
+      requestAnimationFrame(() => {
+        handleSend();
+      });
+    };
+
+    const handleDirectAction = async (actionName, contextPayload) => {
+      if (isSending || isAiThinking) return;
+
+      let messageToSend = '';
+      if (actionName === 'confirm_log_saved_recipe') {
+        messageToSend = `Yes, log ${contextPayload.recipe_name}`;
+      } else {
+        messageToSend = actionName;
+      }
+
+      setIsAiThinking(true);
+      setIsSending(true);
+
+      try {
+        const supabase = getSupabaseClient();
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        const { data: response, error: funcError } = await supabase.functions.invoke('chat-handler', {
+          body: {
+            message: messageToSend,
+            session_id: sessionId,
+            timezone
+          }
+        });
+
+        if (funcError) throw funcError;
+
+        const aiMessage = {
+          id: (Date.now() + 2).toString(),
+          text: response.message,
+          sender: 'ai',
+          responseType: response.response_type,
+          data: response.data
+        };
+        setMessages(prevMessages => [...prevMessages, aiMessage]);
+        setPendingAction(null);
+
+      } catch (error) {
+        console.error('Error sending direct action:', error);
+        const errorMessage = { id: (Date.now() + 3).toString(), text: `Action failed: ${error.message}`, sender: 'ai', isError: true };
+        setMessages(prevMessages => [...prevMessages, errorMessage]);
+      } finally {
+        setIsAiThinking(false);
+        setIsSending(false);
+      }
+    };
+
+    return (
+      <View style={combinedContainerStyle}>
+        <View style={textContainerStyle}>
+          {item.isLoading ? (
+            <ActivityIndicator size="small" color={isUser ? theme.colors.onPrimary : theme.colors.primary} />
+          ) : (
+            <PaperText style={combinedTextStyle}>
+              {item.text}
+            </PaperText>
+          )}
+        </View>
+
+        {item.data?.validation?.warnings?.length > 0 && (
+          <Surface style={[styles.warningBox, { backgroundColor: '#FFF9C4' }]} elevation={0}>
+            <IconButton icon="alert-circle" iconColor="#FBC02D" size={20} style={{ margin: 0 }} />
+            <PaperText style={styles.warningText}>
+              {item.data.validation.warnings[0]}
+            </PaperText>
+          </Surface>
+        )}
+
+        {(isFoodConfirmation || isRecipeSaveConfirmation) && item.data?.nutrition && (
+          <NutritionCard
+            nutrition={item.data.nutrition}
+            theme={theme}
+            isAmbiguous={item.responseType === 'ambiguous'}
+          />
+        )}
+
+        {isFoodConfirmation && (
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={() => handleConfirmation("Yes")}
+              style={styles.confirmButton}
+            >
+              Log it
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => handleConfirmation("No, change something")}
+              style={styles.confirmButton}
+            >
+              Wait, change something
+            </Button>
+          </View>
+        )}
+
+        {isRecipeSaveConfirmation && (
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={() => handleConfirmation("Yes, save it")}
+              style={styles.confirmButton}
+            >
+              Save & Log
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => handleConfirmation("Don't save")}
+              style={styles.confirmButton}
+            >
+              Just log (don't save)
+            </Button>
+          </View>
+        )}
+
+        {isRecipeNotFound && (
+          <View style={styles.buttonContainer}>
+            <Button
+              mode="contained"
+              onPress={() => handleConfirmation("Okay, here are the ingredients")}
+              style={styles.confirmButton}
+            >
+              Provide Ingredients
+            </Button>
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
+      {isOffline && (
+        <View style={[styles.offlineBanner, { backgroundColor: theme.colors.warning }]}>
+          <PaperText style={[styles.offlineText, { color: theme.colors.surface }]}>You are offline</PaperText>
+        </View>
+      )}
+
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        renderItem={renderMessageItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContentContainer}
+        style={styles.messageList}
+      />
+
+      {isFetchingRecommendations && (
+        <Caption style={[styles.fetchingStatus, { color: theme.colors.textSecondary }]}>Fetching recommendations...</Caption>
+      )}
+
+      {isAiThinking && (
+        <View style={[styles.loadingContainer, { backgroundColor: theme.colors.background }]}>
+          <ActivityIndicator size="small" color={theme.colors.primary} />
+          <Caption style={[styles.loadingText, { color: theme.colors.textSecondary }]}>NutriPal is thinking...</Caption>
+        </View>
+      )}
+
+      <Surface style={[styles.inputSurface, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.outline }]} elevation={4}>
+        <PaperTextInput
+          style={[styles.input, { backgroundColor: theme.colors.background }]}
+          value={inputText}
+          onChangeText={setInputText}
+          placeholder={isOffline ? "Offline - Cannot send" : "Type your message..."}
+          mode="outlined"
+          dense
+          multiline
+          editable={!isAiThinking && !isSending && !isOffline && !isFetchingRecommendations}
+        />
+        {(isAiThinking || isSending) ? (
+          <ActivityIndicator animating={true} color={theme.colors.primary} style={styles.sendButtonContainer} />
+        ) : (
+          <IconButton
+            icon="send"
+            iconColor={theme.colors.primary}
+            size={28}
+            onPress={handleSend}
+            disabled={!inputText.trim() || isAiThinking || isSending || isOffline || isFetchingRecommendations}
+            style={styles.sendButtonContainer}
+          />
+        )}
+      </Surface>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  offlineBanner: {
+    paddingVertical: 4,
+    alignItems: 'center',
+  },
+  offlineText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  messageList: {
+    flex: 1,
+  },
+  listContentContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    flexGrow: 1,
+  },
+  messageContainer: {
+    flexDirection: 'column',
+    borderRadius: 16,
+    marginBottom: 12,
+    maxWidth: '85%',
+    elevation: 1,
+    overflow: 'hidden',
+  },
+  userMessage: {
+    alignSelf: 'flex-end',
+    borderBottomRightRadius: 4,
+    marginLeft: '15%',
+  },
+  aiMessage: {
+    alignSelf: 'flex-start',
+    borderBottomLeftRadius: 4,
+    marginRight: '15%',
+  },
+  textContainer: {
+    padding: 12,
+  },
+  baseMessageText: {
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '400',
+  },
+  thinkingText: {
+    fontStyle: 'italic',
+  },
+  errorText: {
+  },
+  inputSurface: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderTopWidth: 1,
+  },
+  input: {
+    flex: 1,
+    marginRight: 8,
+    paddingVertical: 0,
+    paddingLeft: 12,
+    textAlignVertical: 'center',
+  },
+  sendButtonContainer: {
+    margin: 0,
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fetchingStatus: {
+    textAlign: 'center',
+    paddingVertical: 4,
+    fontStyle: 'italic',
+  },
+  actionButtonsContainer: {
+    padding: 12,
+    paddingTop: 4,
+    flexDirection: 'column',
+    width: '100%',
+  },
+  actionButton: {
+    marginVertical: 4,
+    borderRadius: 8,
+  },
+  secondaryButton: {
+  },
+  buttonLabel: {
+    fontSize: 14,
+    paddingVertical: 2,
+  },
+  secondaryButtonLabel: {
+    fontSize: 14,
+    paddingVertical: 2,
+  },
+  loader: {
+    marginTop: 8,
+    alignSelf: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 10,
+    marginHorizontal: -5,
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  buttonContainerMulti: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  confirmButton: {
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    marginHorizontal: 5,
+  },
+  multiChoiceButton: {
+    marginVertical: 4,
+  },
+  multiChoiceButtonLabel: {
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  loadingText: {
+    marginLeft: 8,
+  },
+  // Rich Nutrition Card Styles
+  nutritionCard: {
+    margin: 10,
+    borderRadius: 12,
+    padding: 12,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    opacity: 0.7,
+  },
+  calorieBadge: {
+    alignItems: 'flex-end',
+  },
+  calorieValue: {
+    fontSize: 24,
+    fontWeight: '900',
+    lineHeight: 28,
+  },
+  calorieUnit: {
+    fontSize: 12,
+    opacity: 0.6,
+    marginTop: -4,
+  },
+  macroGrid: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  macroPill: {
+    flex: 1,
+    marginHorizontal: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  macroLabel: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  macroValue: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  ingredientsList: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  ingredientRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  ingredientName: {
+    fontSize: 12,
+    flex: 1,
+    marginRight: 8,
+    opacity: 0.8,
+  },
+  ingredientCals: {
+    fontSize: 12,
+    fontWeight: '600',
+    opacity: 0.8,
+  },
+  warningBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+    marginTop: 0,
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FBC02D',
+  },
+  warningText: {
+    flex: 1,
+    fontSize: 12,
+    color: '#827717',
+    fontWeight: '600',
+  },
+});
+
+export default ChatScreen; 

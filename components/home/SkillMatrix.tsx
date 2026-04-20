@@ -2,7 +2,6 @@
 
 import AnimateIn, { StaggerContainer } from '@/components/ui/AnimateIn';
 import SectionLabel from '@/components/ui/SectionLabel';
-import { useLayout } from '@/components/ui/LayoutProvider';
 import { skillCategories, languages } from '@/data/skills';
 
 /** Minimal icon glyphs per category — keeps it clean, no icon library needed */
@@ -14,15 +13,6 @@ const categoryIcons: Record<string, string> = {
 };
 
 export default function SkillMatrix() {
-  const { layout } = useLayout();
-
-  const gridClasses = {
-    standard: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6',
-    screenshot: 'grid grid-cols-1 md:grid-cols-2 gap-6',
-    bento: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr',
-    split: 'grid grid-cols-1 sm:grid-cols-2 gap-6',
-  }[layout];
-
   return (
     <section className="py-16 md:py-20 border-t border-border">
       <div className="section-container">
@@ -30,7 +20,7 @@ export default function SkillMatrix() {
           <SectionLabel>What I Do</SectionLabel>
         </AnimateIn>
 
-        <StaggerContainer className={gridClasses}>
+        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
           {skillCategories.map((category) => (
             <AnimateIn key={category.title} className="h-full">
               <div className="group theme-card p-6 h-full flex flex-col relative overflow-hidden">

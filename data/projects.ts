@@ -44,6 +44,30 @@ export const projects: Project[] = [
     }
   },
   {
+    title: 'NutriPal AI Nutrition Assistant',
+    slug: 'ai-nutrition-assistant',
+    hook: 'A reasoning-first nutrition assistant built to turn messy meal descriptions, saved recipes, audits, and what-if decisions into reliable daily nutrition tracking without silent guessing.',
+    stack: ['Agentic Architecture', 'Nutrition Tracking', 'Stateful UX'],
+    category: 'Software',
+    roleTag: 'Solo Builder',
+    content: {
+      problem:
+        'Traditional nutrition trackers create too much friction for real meals, while naive LLM logging creates a different problem: silent assumptions, hallucinated macros, and numbers users stop trusting.',
+      whatIBuilt:
+        'A multi-agent nutrition system with intent classification, a reasoning orchestrator, specialist nutrition and recipe agents, and an insight layer for audits, summaries, patterns, and day classification. The local portfolio demo recreates those product flows with deterministic browser state so visitors can inspect goals, logs, recipes, and what-if decisions in one place.',
+      myRole:
+        'Designed the end-to-end agent workflow, mapped the execution paths for logging, saved recipes, audits, and hypothetical scenarios, then translated the original mobile-first source into a browser-based portfolio demo that showcases how the system actually works.',
+      outcome:
+        'Created an auditable product architecture that prioritizes trust over flashy AI behavior. The result is a nutrition assistant that can clarify ambiguity, remember context, reuse saved recipes, and explain tradeoffs instead of acting like a calorie guesser.',
+      repoUrl: 'https://github.com/buildsbyian/AI-nutritional-assistant',
+      images: [
+        '/assets/projects/ai-nutrition-assistant/meal-log-with-label.png',
+        '/assets/projects/ai-nutrition-assistant/audit-correction.png',
+        '/assets/projects/ai-nutrition-assistant/nutrition-explainer.png',
+      ],
+    },
+  },
+  {
     title: 'Bongo Cat Typing Companion',
     slug: 'bongo-cat',
     hook: "An ESP32-based desk device with a digital pet that animates when you type -- displaying real-time typing speed, CPU, and RAM load.",
