@@ -19,7 +19,7 @@ const experience = [
     period: '2024 – 2026',
     type: 'Full-time · Remote',
     summary:
-      'Direct CEO report at an AI-native software company. Owned strategy, operations, AI tooling, and product prototyping without waiting for perfect specs or a dedicated engineering team.',
+      'Direct CEO report at an US Based software company. Owned strategy, operations, AI tooling, and product prototyping without waiting for perfect specs or a dedicated engineering team.',
     companyLinks: [
       {
         label: 'Website',
@@ -33,7 +33,7 @@ const experience = [
       },
     ],
     bullets: [
-      'Primary thought partner and execution layer for the CEO: translated shifting priorities into structured decisions, operational systems, and working software.',
+      'Thought and execution partner for the CEO: translated shifting priorities into structured decisions, operational systems, and working software.',
       'Owned strategic research for new ventures and portfolio expansions; delivered reports that shaped C-suite decisions.',
       'Built 4 AI product prototypes (0 to 1), each scoped to test a specific business hypothesis for new venture evaluation.',
       'Designed and shipped internal tooling: CRM, dashboards, custom workflows, giving leadership real-time operational visibility.',
@@ -350,81 +350,81 @@ export default function CVPage() {
             {experience.map((job, i) => (
               <AnimateIn key={job.company} delay={i * 0.08}>
                 <article className="theme-card p-8 md:p-10">
-                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-                  <div className="max-w-3xl">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h2 className="font-display text-2xl md:text-3xl text-text-primary leading-tight">
-                        {job.company}
-                      </h2>
-                      {job.companyLinks.length > 0 ? (
-                        <div className="flex flex-wrap gap-2">
-                          {job.companyLinks.map((link) => (
-                            <CompanyLink
-                              key={link.label}
-                              label={link.label}
-                              href={link.href}
-                              icon={link.icon}
-                            />
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <p className="mt-3 font-mono text-sm uppercase tracking-[0.12em] text-accent">
-                      {job.role}
-                    </p>
-                  </div>
-
-                  <div className="shrink-0 border-l-2 border-accent pl-4 font-mono text-xs uppercase tracking-[0.12em] text-text-secondary">
-                    <p>{job.period}</p>
-                    <p className="mt-2">{job.type}</p>
-                  </div>
-                </div>
-
-                <p className="mt-7 max-w-3xl font-mono text-sm md:text-base leading-relaxed text-text-secondary">
-                  {job.summary}
-                </p>
-
-                <ul className="mt-8 grid gap-3">
-                  {job.bullets.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-start gap-3 font-mono text-sm md:text-[15px] leading-relaxed text-text-primary"
-                    >
-                      <span className="mt-[0.6em] h-1.5 w-1.5 shrink-0 bg-accent" aria-hidden="true" />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {job.caseStudies.length > 0 ? (
-                  <div className="mt-8 border-t border-border pt-6">
-                    <p className="mb-4 font-mono text-xs uppercase tracking-[0.14em] text-text-secondary">
-                      Proof of work
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {job.caseStudies.map((cs) => (
-                        <Link
-                          key={cs.label}
-                          href={cs.href}
-                          className="group theme-card flex items-center gap-3 px-4 py-3"
-                        >
-                          <div>
-                            <div className="font-mono text-sm text-text-primary group-hover:text-accent transition-colors duration-200">
-                              {cs.label}
-                            </div>
-                            <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-secondary">
-                              {cs.sublabel}
-                            </div>
+                  <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                    <div className="max-w-3xl">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h2 className="font-display text-2xl md:text-3xl text-text-primary leading-tight">
+                          {job.company}
+                        </h2>
+                        {job.companyLinks.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {job.companyLinks.map((link) => (
+                              <CompanyLink
+                                key={link.label}
+                                label={link.label}
+                                href={link.href}
+                                icon={link.icon}
+                              />
+                            ))}
                           </div>
-                          <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">
-                            →
-                          </span>
-                        </Link>
-                      ))}
+                        ) : null}
+                      </div>
+
+                      <p className="mt-3 font-mono text-sm uppercase tracking-[0.12em] text-accent">
+                        {job.role}
+                      </p>
+                    </div>
+
+                    <div className="shrink-0 border-l-2 border-accent pl-4 font-mono text-xs uppercase tracking-[0.12em] text-text-secondary">
+                      <p>{job.period}</p>
+                      <p className="mt-2">{job.type}</p>
                     </div>
                   </div>
-                ) : null}
+
+                  <p className="mt-7 max-w-3xl font-mono text-sm md:text-base leading-relaxed text-text-secondary">
+                    {job.summary}
+                  </p>
+
+                  <ul className="mt-8 grid gap-3">
+                    {job.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-3 font-mono text-sm md:text-[15px] leading-relaxed text-text-primary"
+                      >
+                        <span className="mt-[0.6em] h-1.5 w-1.5 shrink-0 bg-accent" aria-hidden="true" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {job.caseStudies.length > 0 ? (
+                    <div className="mt-8 border-t border-border pt-6">
+                      <p className="mb-4 font-mono text-xs uppercase tracking-[0.14em] text-text-secondary">
+                        Proof of work
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        {job.caseStudies.map((cs) => (
+                          <Link
+                            key={cs.label}
+                            href={cs.href}
+                            className="group theme-card flex items-center gap-3 px-4 py-3"
+                          >
+                            <div>
+                              <div className="font-mono text-sm text-text-primary group-hover:text-accent transition-colors duration-200">
+                                {cs.label}
+                              </div>
+                              <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-secondary">
+                                {cs.sublabel}
+                              </div>
+                            </div>
+                            <span className="text-accent transition-transform duration-200 group-hover:translate-x-1">
+                              →
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </article>
               </AnimateIn>
             ))}
