@@ -6,9 +6,13 @@ import SectionLabel from '@/components/ui/SectionLabel';
 import { vaultItems } from '@/data/vault';
 
 export default function VaultTeaser() {
-  // Only show items that are ready and limit to 3
+  // Only show curated ready items on the homepage teaser.
   const displayItems = vaultItems
-    .filter((item) => item.status === 'Ready')
+    .filter(
+      (item) =>
+        item.status === 'Ready' &&
+        ['Sourcing SOP', 'Lean Product Framework'].includes(item.title)
+    )
     .slice(0, 3);
 
   return (
@@ -33,7 +37,7 @@ export default function VaultTeaser() {
                     </p>
                   </div>
 
-                  {/* Right: type badge + download CTA */}
+                  {/* Right: type badge + view CTA */}
                   <div className="flex items-center gap-4 shrink-0">
                     <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-secondary">
                       {item.type}
@@ -41,11 +45,12 @@ export default function VaultTeaser() {
                     {item.downloadUrl ? (
                       <a
                         href={item.downloadUrl}
-                        download={item.downloadUrl.split('/').pop()}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="font-mono text-xs text-accent hover:text-accent-hover transition-colors duration-200 inline-flex items-center gap-1"
                       >
-                        Download
-                        <span className="text-[10px]">↓</span>
+                        View
+                        <span className="text-[10px]">↗</span>
                       </a>
                     ) : (
                       <span className="font-mono text-xs text-text-secondary/50">

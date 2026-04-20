@@ -184,12 +184,75 @@ function loadInitialState(): CommandCenterState {
 
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    return sanitizeDemoState(
-      stored ? (JSON.parse(stored) as CommandCenterState) : createCommandCenterSeed()
-    );
+    const parsed = stored ? (JSON.parse(stored) as Partial<CommandCenterState>) : null;
+    return sanitizeDemoState(normalizeCommandCenterState(parsed));
   } catch {
     return sanitizeDemoState(createCommandCenterSeed());
   }
+}
+
+function normalizeContact(contact: Partial<DemoContact>): DemoContact {
+  return {
+    id: contact.id ?? createId('contact'),
+    name: contact.name ?? 'Unnamed contact',
+    role: contact.role ?? '',
+    email: contact.email ?? '',
+    additionalEmails: Array.isArray(contact.additionalEmails) ? contact.additionalEmails : [],
+    company: contact.company ?? '',
+    type: (contact.type as DemoContactType) ?? 'guest',
+    area: (contact.area as DemoContactArea) ?? null,
+    linkedinUrl: contact.linkedinUrl ?? '',
+    isInThinkTank: Boolean(contact.isInThinkTank),
+    currentProjects: Array.isArray(contact.currentProjects) ? contact.currentProjects : [],
+    goalsAspirations: Array.isArray(contact.goalsAspirations) ? contact.goalsAspirations : [],
+    strategicGoals: Array.isArray(contact.strategicGoals) ? contact.strategicGoals : [],
+    generalNotes: contact.generalNotes ?? '',
+    createdAt: contact.createdAt ?? new Date().toISOString(),
+  };
+}
+
+function normalizeCommandCenterState(
+  stored: Partial<CommandCenterState> | null
+): CommandCenterState {
+  const seed = createCommandCenterSeed();
+  if (!stored) return seed;
+
+  const storedContacts = Array.isArray(stored.contacts) ? stored.contacts : [];
+  const storedPipeline = Array.isArray(stored.pipeline) ? stored.pipeline : [];
+
+  const normalizedContacts = storedContacts.length > 0 ? storedContacts.map(normalizeContact) : [];
+  const contactsById = new Map(normalizedContacts.map((contact) => [contact.id, contact]));
+  const seedById = new Map(seed.contacts.map((contact) => [contact.id, contact]));
+
+  const mergedContacts =
+    normalizedContacts.length > 0 ? [...normalizedContacts] : [...seed.contacts];
+
+  for (const entry of storedPipeline) {
+    const contactId = entry?.contactId;
+    if (contactId && !contactsById.has(contactId) && seedById.has(contactId)) {
+      const seedContact = seedById.get(contactId);
+      if (seedContact) {
+        mergedContacts.push(seedContact);
+        contactsById.set(seedContact.id, seedContact);
+      }
+    }
+  }
+
+  return {
+    ...seed,
+    ...stored,
+    contacts: mergedContacts,
+    events: Array.isArray(stored.events) && stored.events.length > 0 ? stored.events : seed.events,
+    pipeline:
+      Array.isArray(stored.pipeline) && stored.pipeline.length > 0 ? stored.pipeline : seed.pipeline,
+    vipProfiles:
+      Array.isArray(stored.vipProfiles) && stored.vipProfiles.length > 0
+        ? stored.vipProfiles
+        : seed.vipProfiles,
+    ctoLeads:
+      Array.isArray(stored.ctoLeads) && stored.ctoLeads.length > 0 ? stored.ctoLeads : seed.ctoLeads,
+    bizdev: stored.bizdev ?? seed.bizdev,
+  };
 }
 
 function createId(prefix: string) {
@@ -1575,7 +1638,7 @@ export default function BizDevCommandCenterDemo() {
                       </p>
                     </div>
 
-                    <div>
+                    <div className="min-w-0">
                       <select
                         value={entry.stage}
                         onChange={(event) =>
@@ -1583,7 +1646,7 @@ export default function BizDevCommandCenterDemo() {
                             stage: event.target.value as DemoPipelineStage,
                           })
                         }
-                        className="rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
+                        className="w-full min-w-0 truncate rounded-xl border border-[#d1d5db] bg-white px-3 py-2 text-sm outline-none"
                       >
                         {PIPELINE_STAGES.map((stage) => (
                           <option key={stage} value={stage}>
@@ -1600,7 +1663,7 @@ export default function BizDevCommandCenterDemo() {
                           notes: event.target.value,
                         })
                       }
-                      className="min-h-24 rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
+                      className="min-h-24 w-full min-w-0 rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
                     />
 
                     <input
@@ -1610,10 +1673,10 @@ export default function BizDevCommandCenterDemo() {
                           nextAction: event.target.value,
                         })
                       }
-                      className="rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
+                      className="w-full min-w-0 rounded-xl border border-[#d1d5db] px-3 py-2 text-sm outline-none"
                     />
 
-                    <div className="grid gap-3">
+                    <div className="grid min-w-0 gap-3">
                       <label className="block">
                         <span className="text-xs font-medium uppercase tracking-[0.12em] text-[#64748b]">
                           Next Action Date
@@ -1668,6 +1731,131 @@ export default function BizDevCommandCenterDemo() {
                 <MetricCard label="VIPs" value={String(vipContacts.length)} detail="Priority relationship profiles" />
                 <MetricCard label="Hosts" value={String(state.contacts.filter((contact) => contact.type === 'host').length)} detail="Repeat conveners and connectors" />
                 <MetricCard label="Think Tank" value={String(state.contacts.filter((contact) => contact.isInThinkTank).length)} detail="Current peer-group members" />
+              </div>
+            </SurfaceCard>
+
+            <SurfaceCard
+              title="All Contacts"
+              description="Local dummy contacts shaped like the original Supabase-backed tool"
+              badge={`Showing ${filteredContacts.length} of ${state.contacts.length}`}
+            >
+              <div className="space-y-4">
+                <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_180px_180px_180px]">
+                  <input
+                    value={contactSearch}
+                    onChange={(event) => setContactSearch(event.target.value)}
+                    placeholder="Search contacts by name, email, or company..."
+                    className="w-full rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-sm outline-none"
+                  />
+
+                  <select
+                    value={contactTypeFilter}
+                    onChange={(event) =>
+                      setContactTypeFilter(event.target.value as ContactTypeFilter)
+                    }
+                    className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-sm outline-none"
+                  >
+                    {CONTACT_TYPES.map((option) => (
+                      <option key={option} value={option}>
+                        {option === 'all' ? 'All Types' : toTitleCase(option)}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={contactAreaFilter}
+                    onChange={(event) => setContactAreaFilter(event.target.value as ContactAreaFilter)}
+                    className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-sm outline-none"
+                  >
+                    {CONTACT_AREAS.map((option) => (
+                      <option key={option} value={option}>
+                        {option === 'all' ? 'All Areas' : option === 'none' ? 'No Area' : toTitleCase(option)}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={contactSort}
+                    onChange={(event) => setContactSort(event.target.value as ContactSort)}
+                    className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-sm outline-none"
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name">Name A-Z</option>
+                    <option value="company">Company A-Z</option>
+                  </select>
+                </div>
+
+                <div className="overflow-hidden rounded-2xl border border-[#e5e7eb] bg-white">
+                  <div className="grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.1fr)_minmax(0,1fr)_160px_140px_180px] gap-4 border-b border-[#e5e7eb] px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#64748b]">
+                    <span>Name</span>
+                    <span>Email</span>
+                    <span>Company</span>
+                    <span>Type</span>
+                    <span>Area</span>
+                    <span className="text-right">Actions</span>
+                  </div>
+
+                  {filteredContacts.map((contact) => (
+                    <div
+                      key={contact.id}
+                      className="grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.1fr)_minmax(0,1fr)_160px_140px_180px] gap-4 border-b border-[#eef2f7] px-4 py-4 text-sm last:border-b-0"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-base font-semibold text-[#111827]">
+                            {contact.name}
+                          </p>
+                          {contact.linkedinUrl ? (
+                            <a
+                              href={contact.linkedinUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-[#4f46e5] hover:underline"
+                            >
+                              LinkedIn
+                            </a>
+                          ) : null}
+                        </div>
+                        <p className="truncate text-sm text-[#64748b]">{contact.role}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-[#111827]">{contact.email}</p>
+                        {contact.additionalEmails.length > 0 ? (
+                          <p className="truncate text-xs text-[#64748b]">
+                            +{contact.additionalEmails.length} additional
+                          </p>
+                        ) : null}
+                      </div>
+                      <p className="truncate text-[#111827]">{contact.company}</p>
+                      <span className="w-fit rounded-full border border-[#dbe1eb] px-3 py-1 text-xs font-medium text-[#111827]">
+                        {getContactTypeLabel(contact.type)}
+                      </span>
+                      <p className="text-[#475569]">
+                        {contact.area ? toTitleCase(contact.area) : '-'}
+                      </p>
+                      <div className="flex items-center justify-end gap-3 text-sm">
+                        <button
+                          type="button"
+                          onClick={() => openViewContact(contact)}
+                          className="text-[#0f172a] hover:underline"
+                        >
+                          View
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTool('events-management');
+                            setActiveEventsTab('contacts');
+                          }}
+                          className="text-[#4f46e5] hover:underline"
+                        >
+                          Open Tool
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </SurfaceCard>
           </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import SectionLabel from '@/components/ui/SectionLabel';
 import Button from '@/components/ui/Button';
+import PageHero from '@/components/ui/PageHero';
 
 export const metadata: Metadata = {
   title: 'CV',
@@ -9,21 +9,30 @@ export const metadata: Metadata = {
 
 export default function CVPage() {
   return (
-    <section className="section-container py-24 md:py-32">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
-        <div>
-          <SectionLabel>Curriculum Vitae</SectionLabel>
-          <h1 className="font-display text-3xl md:text-4xl text-text-primary">
-            CV
-          </h1>
-        </div>
-        <Button href="/cv.pdf" variant="filled" download>
-          Download PDF
-        </Button>
-      </div>
-      <p className="font-mono text-sm text-text-secondary max-w-md">
-        Full interactive CV will be displayed here. Coming soon.
-      </p>
-    </section>
+    <>
+      <PageHero
+        label="Curriculum Vitae"
+        title={
+          <>
+            CV <span className="text-accent">Overview</span>
+          </>
+        }
+        description="A concise snapshot of roles, operating scope, and experience, with the downloadable PDF available right away."
+        aside={
+          <Button href="/cv.pdf" variant="filled" download>
+            Download PDF
+          </Button>
+        }
+        sectionClassName="pt-24 pb-14 md:pt-32 md:pb-16"
+        titleClassName="text-3xl md:text-4xl lg:text-5xl"
+        descriptionClassName="max-w-lg"
+      />
+
+      <section className="section-container pb-24 md:pb-32">
+        <p className="font-mono text-sm text-text-secondary max-w-md">
+          Full interactive CV will be displayed here. Coming soon.
+        </p>
+      </section>
+    </>
   );
 }

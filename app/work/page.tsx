@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import PageHero from '@/components/ui/PageHero';
 import SectionLabel from '@/components/ui/SectionLabel';
 import Tag from '@/components/ui/Tag';
 import { projects } from '@/data/projects';
@@ -31,61 +32,74 @@ export default function WorkPage() {
   );
 
   return (
-    <section className="section-container py-24 md:py-32">
-      <div className="max-w-3xl mb-16">
-        <SectionLabel>All Work</SectionLabel>
-        <h1 className="font-display text-3xl md:text-5xl text-text-primary mb-6 leading-tight">
-          Software, hardware, and resources in one place.
-        </h1>
-        <p className="font-mono text-sm text-text-secondary leading-relaxed">
-          This is the main index for everything on the site. Work is grouped by type so the
-          portfolio stays easy to scan without splitting the navigation into separate sections.
-        </p>
-      </div>
-
-      <div className="flex flex-wrap gap-3 mb-16">
-        <a href="#software" className="theme-pill">
-          Software
-        </a>
-        <a href="#hardware" className="theme-pill">
-          Hardware
-        </a>
-        <a href="#resources" className="theme-pill">
-          Resources
-        </a>
-      </div>
-
-      <WorkSection
-        id="software"
-        label="Software"
-        title="Software"
-        description={sectionCopy.Software}
-        items={softwareProjects.map((project) => (
-          <ProjectRow key={project.slug} project={project} />
-        ))}
+    <>
+      <PageHero
+        label="All Work"
+        title={
+          "What I've Built"
+        }
+        description="High-leverage software, functional hardware, and the open-source resources behind my operational work."
+        footer={
+          <div className="flex flex-wrap gap-3">
+            <a href="#software" className="theme-pill">
+              Software
+            </a>
+            <a href="#hardware" className="theme-pill">
+              Hardware
+            </a>
+            <a href="#resources" className="theme-pill">
+              Resources
+            </a>
+          </div>
+        }
+        sectionClassName="pt-24 pb-16 md:pt-32 md:pb-20"
+        copyClassName="max-w-3xl"
+        titleClassName="max-w-3xl"
+        descriptionClassName="max-w-3xl"
       />
 
-      <WorkSection
-        id="hardware"
-        label="Hardware"
-        title="Hardware"
-        description={sectionCopy.Hardware}
-        items={hardwareProjects.map((project) => (
-          <ProjectRow key={project.slug} project={project} />
-        ))}
-      />
+      <section className="section-container pb-24 md:pb-32">
+        <WorkSection
+          id="software"
+          label="Software"
+          title="Software"
+          description={sectionCopy.Software}
+          items={softwareProjects.map((project) => (
+            <ProjectRow key={project.slug} project={project} />
+          ))}
+        />
 
-      <WorkSection
-        id="resources"
-        label="Resources"
-        title="Resources"
-        description={sectionCopy.Strategy}
-        items={[
-          ...strategyProjects.map((project) => <ProjectRow key={project.slug} project={project} />),
-          ...readyResources.map((resource) => <ResourceRow key={resource.title} title={resource.title} description={resource.description} type={resource.type} downloadUrl={resource.downloadUrl} />),
+        <WorkSection
+          id="hardware"
+          label="Hardware"
+          title="Hardware"
+          description={sectionCopy.Hardware}
+          items={hardwareProjects.map((project) => (
+            <ProjectRow key={project.slug} project={project} />
+          ))}
+        />
+
+        <WorkSection
+          id="resources"
+          label="Resources"
+          title="Resources"
+          description={sectionCopy.Strategy}
+          items={[
+            ...strategyProjects.map((project) => <ProjectRow key={project.slug} project={project} />),
+            ...readyResources.map((resource) => (
+            <ResourceRow
+              key={resource.title}
+              title={resource.title}
+              description={resource.description}
+              type={resource.type}
+              tags={resource.tags}
+              downloadUrl={resource.downloadUrl}
+            />
+          )),
         ]}
-      />
-    </section>
+        />
+      </section>
+    </>
   );
 }
 
@@ -158,11 +172,13 @@ function ResourceRow({
   title,
   description,
   type,
+  tags,
   downloadUrl,
 }: {
   title: string;
   description: string;
   type: string;
+  tags?: string[];
   downloadUrl?: string;
 }) {
   return (
@@ -171,6 +187,15 @@ function ResourceRow({
         <div className="max-w-3xl">
           <h3 className="font-display text-xl md:text-2xl text-text-primary mb-3">{title}</h3>
           <p className="font-mono text-sm text-text-secondary leading-relaxed">{description}</p>
+          {tags?.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <Tag key={tag} variant="default">
+                  {tag}
+                </Tag>
+              ))}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-3 shrink-0">

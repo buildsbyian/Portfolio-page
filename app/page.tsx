@@ -13,22 +13,9 @@ export default function HomePage() {
 
   const HeroContent = (
     <section className={`relative overflow-hidden ${layout === 'split' ? 'h-full flex flex-col justify-center' : ''}`}>
-      {/* Ambient Hero Glow */}
-      <div className="hero-glow absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 pointer-events-none" aria-hidden="true">
-        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-accent to-[#9089FC] sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
-      </div>
-
       {/* Subtle background grid element */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `
-            linear-gradient(var(--border) 1px, transparent 1px),
-            linear-gradient(90deg, var(--border) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
+      <div className="page-grid-background" />
+      <div className="page-hero-frame" aria-hidden="true" />
 
       <div className={`section-container relative z-10 ${layout === 'split' ? 'pt-24 pb-20' : 'pt-[35vh] pb-10'} flex flex-col lg:flex-row justify-between items-start lg:items-center gap-12`}>
         <StaggerContainer className="max-w-3xl">

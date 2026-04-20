@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import SectionLabel from '@/components/ui/SectionLabel';
-import Tag from '@/components/ui/Tag';
 import Button from '@/components/ui/Button';
+import PageHero from '@/components/ui/PageHero';
+import Tag from '@/components/ui/Tag';
 import BizDevCommandCenterDemo from '@/demos/bizdev-command-center';
 import { projects } from '@/data/projects';
 
@@ -78,9 +79,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <div className="grid grid-cols-1 gap-4">
                 {project.content.images.map((src, idx) => (
                   <div key={idx} className="border border-border bg-surface overflow-hidden">
-                    <img 
-                      src={src} 
-                      alt={`${project.title} - ${idx + 1}`} 
+                    <Image
+                      src={src}
+                      alt={`${project.title} - ${idx + 1}`}
+                      width={1600}
+                      height={1200}
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="w-full h-auto object-cover"
                     />
                   </div>
@@ -134,8 +138,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       { title: 'The Problem', body: project.content.problem },
       { title: 'What I Built', body: project.content.whatIBuilt },
       { title: 'Concrete Outcome', body: project.content.outcome },
-      { title: 'My Role', body: project.content.myRole },
-    ];
+      ...(project.category === 'Strategy'
+        ? []
+        : [{ title: 'My Role', body: project.content.myRole }]),
+    ].filter((section) => section.body?.trim());
 
     const leftColumnSections = isTwoColumn ? contentSections.slice(0, 2) : contentSections;
     const rightColumnSections = isTwoColumn ? contentSections.slice(2) : [];
@@ -197,30 +203,27 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <div className="pt-20 md:pt-28 lg:pt-32 pb-16 md:pb-24">
-      {/* Header Section */}
-      <section className="section-container mb-12 md:mb-14 lg:mb-16">
-        <div className="mb-5 md:mb-6">
-          <SectionLabel>
-            <span className="text-[0.9rem] md:text-[1rem] tracking-[0.18em] text-text-primary">
-              {project.category} Case Study
-            </span>
-          </SectionLabel>
-        </div>
-        
-        <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-text-primary mb-5 md:mb-6 leading-tight max-w-4xl">
-          {project.title}
-        </h1>
-        
-        <p className="font-mono text-base md:text-lg text-text-secondary max-w-2xl leading-relaxed mb-6 md:mb-8">
-          {project.hook}
-        </p>
-
-        <div className="flex flex-wrap gap-2.5 mb-8 md:mb-10">
-          {project.stack.map(tech => (
-            <Tag key={tech} variant="default">{tech}</Tag>
-          ))}
-        </div>
-      </section>
+      <PageHero
+        label={
+          <span className="text-[0.9rem] md:text-[1rem] tracking-[0.18em] text-text-primary">
+            {project.category} <span className="text-accent">Case Study</span>
+          </span>
+        }
+        title={project.title}
+        description={project.hook}
+        footer={
+          <div className="flex flex-wrap gap-2.5">
+            {project.stack.map((tech) => (
+              <Tag key={tech} variant="default">
+                {tech}
+              </Tag>
+            ))}
+          </div>
+        }
+        sectionClassName="mb-12 md:mb-14 lg:mb-16"
+        titleClassName="max-w-4xl text-4xl md:text-5xl lg:text-6xl"
+        descriptionClassName="max-w-2xl text-base md:text-lg"
+      />
 
       {isSoftware ? (
         /* Stacked Layout for Software */

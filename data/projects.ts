@@ -39,7 +39,8 @@ export const projects: Project[] = [
       problem: "The CEO was navigating 20+ disconnected Excel sheets across different locations. Leads, contacts, event guests, and project status all lived in separate files -- or in someone's head. Finding the right sheet for a current project took longer than the actual work it was meant to track.",
       whatIBuilt: "A custom internal management platform built entirely on my own initiative, with no engineering team involvement. The tool unified four operational layers into one interface: a lead and contact database, event and guest management, a think tank matrix with rated current and potential clients, and kanban-style pipeline boards for each active BizDev project. Everything interconnected -- a contact ties to an event, an event ties to a deal.",
       myRole: "Identified the problem before it was flagged as one. Scoped, designed, and shipped the entire product solo in 10 days using AI-assisted development. TypeScript. Zero input from engineering.",
-      outcome: "Replaced a fragmented, unmanageable system with a single operational tab. Reporting became instant. The CEO had full pipeline visibility without opening a single Excel file."
+      outcome: "Replaced a fragmented, unmanageable system with a single operational tab. Reporting became instant. The CEO had full pipeline visibility without opening a single Excel file.",
+      images: ['/assets/projects/bizdev-command-center/command-center-highlight.svg'],
     }
   },
   {
@@ -67,6 +68,54 @@ export const projects: Project[] = [
         '/assets/projects/bongo-cat/Crowdfunding screenshot.png'
       ]
     }
+  },
+  {
+    title: '20 20 Split Keyboard',
+    slug: '20-20-split-keyboard',
+    hook: 'A wireless, handwired split keyboard with hotswap sockets and a magnetic snap-together design, built entirely without a PCB.',
+    stack: ['Firmware (ZMK)', '3D Design', 'No-PCB / Handwired'],
+    category: 'Hardware',
+    roleTag: 'Solo Builder',
+    content: {
+      problem:
+        'Getting into custom ergonomic keyboards is often intimidating and expensive. Existing options usually require navigating complicated PCB orders, buying expensive pre-made kits, or committing to permanent soldering. There was a lack of highly accessible, "actually buildable" kits that offered premium features like hotswap and wireless capabilities without the high barrier to entry.',
+      whatIBuilt:
+        'A standalone wireless split keyboard that completely eliminates the need for a complicated PCB. Using custom 3D-printed plates to secure hotswap sockets for Cherry MX switches, the board is fully handwired while still allowing users to swap switches freely. It runs ZMK firmware on Nice!Nano v2 clones, enabling full Bluetooth wireless support. To make it versatile, I designed the 3D-printed case with an embedded magnet system. This allows the two halves to magnetically snap together into a compact 40% ortholinear layout, or detach into a fully ergonomic 24 + 24 split setup. I also fully documented the build with a detailed matrix pinout, step-by-step manual, and a wiring guide so anyone can build it at home.',
+      myRole:
+        'Designed and 3D modeled the hotswap plate, switch plate, and magnetic housing. Handwired the matrix and configured the custom ZMK firmware. Documented the entire project by writing the step-by-step build instructions, creating the visual wiring pinout, and producing a full YouTube build video.',
+      outcome:
+        'Published a fully open-source, accessible custom keyboard that removes the friction for newcomers. Provided the community with a complete kit including STEP files for remixing, a detailed Bill of Materials, and ZMK firmware setups, making it one of the simplest ways to get into custom split keyboards.',
+      repoUrl: 'https://github.com/vostoklabs/zmk-config-ortho20_20',
+      makerWorldUrls: [{ text: 'MakerWorld Page', url: 'https://makerworld.com/en/models/2563301' }],
+      images: [
+        '/assets/projects/20-20-split-keyboard/split-view.jpg',
+        '/assets/projects/20-20-split-keyboard/together-view.jpg',
+      ],
+    },
+  },
+  {
+    title: 'Designer Instant Coffee Dispenser',
+    slug: 'designer-instant-coffee-dispenser',
+    hook: 'A stylish 3D-printed instant coffee dispenser inspired by professional grinders that delivers exactly one teaspoon per push.',
+    stack: ['3D Design', 'Functional Print', 'Product Design'],
+    category: 'Hardware',
+    roleTag: 'Solo Builder',
+    content: {
+      problem:
+        'Making instant coffee often involves dealing with messy spoons, inconsistent measurements, and unsightly jars cluttering the kitchen counter. There was a need for a quick, one-handed solution for busy mornings that solved the measurement problem while actually looking elegant and professional in a home coffee corner.',
+      whatIBuilt:
+        'I designed and fully 3D-printed a custom instant coffee dispenser inspired by the sleek aesthetics of professional espresso grinders. The core of the device is a carefully engineered dispensing mechanism driven by a simple lever and a rubber band return system that calculates and drops exactly one teaspoon of coffee with a single push. The design features a translucent top hopper to easily monitor supply levels and an elegantly curved base that perfectly frames a standard coffee mug. During the prototyping phase, the internal mechanism was extensively tested and optimized specifically for the consistency of instant coffee, identifying that harder crystals like sugar would jam the precise tolerances of the moving parts.',
+      myRole:
+        'Conceptualized the aesthetic design and form factor. Engineered, calculated, and iteratively tested the internal moving parts to achieve the precise one-teaspoon dispensing volume. Prepared all models for reliable 3D printing and authored the straightforward assembly documentation.',
+      outcome:
+        'Created a highly functional, daily-use kitchen appliance that streamlines the morning coffee routine. Published the complete 3D model files online alongside a comprehensive, step-by-step assembly guide, allowing anyone to easily print and build their own functional kitchen decor.',
+      makerWorldUrls: [{ text: 'View on MakerWorld', url: 'https://makerworld.com/en/models/910659' }],
+      images: [
+        '/assets/projects/designer-instant-coffee-dispenser/demo.gif',
+        '/assets/projects/designer-instant-coffee-dispenser/real-pic.jpg',
+        '/assets/projects/designer-instant-coffee-dispenser/render.jpg',
+      ],
+    },
   },
   {
     title: 'AI Development Workbook',
@@ -114,15 +163,18 @@ export const projects: Project[] = [
   {
     title: 'UX UI and Product Crash Course',
     slug: 'ux-ui-product-crash-course',
-    hook: 'A foundational primer for non-designers aiming to understand the core principles of creating intuitive and visually appealing digital products.',
-    stack: ['CRASH COURSE', 'DESIGN BASICS', 'SLIDE DECK'],
+    hook: 'A foundational primer for product builders, founders, and designers aiming to understand users, validate decisions, and build intuitive digital products that solve real problems.',
+    stack: ['PRODUCT STRATEGY', 'UX RESEARCH', 'CRASH COURSE'],
     category: 'Strategy',
     roleTag: 'Client Work',
     content: {
-      problem: 'Developers and business operators often struggle to make their functional apps look professional and feel intuitive to the end-user.',
-      whatIBuilt: 'A condensed, actionable guide breaking down essential UX/UI heuristics, typography, layout fundamentals, and user flows.',
+      problem:
+        'Teams often guess what features to build instead of observing real user behavior, leading to products that function well but fail to solve genuine pain points. As the course notes, most product teams fail not because they build poorly, but because they build the wrong thing.',
+      whatIBuilt:
+        'An actionable, no-nonsense guide breaking down core lean UX research methods, the psychology of intuitive design, user story creation, and customer journey mapping.',
       myRole: 'Designed and structured the crash course to translate design fundamentals into practical decisions non-designers can apply immediately.',
-      outcome: 'Empowers non-designers to make confident product decisions and build better, user-centric interfaces from day one.',
+      outcome:
+        "Equips teams to stop optimizing for pixels and start designing for moments that matter. Readers will learn how to gather behavioral insights, write testable user stories, and design interfaces that perfectly match their users' mental models.",
       previewUrl: '/resources/ux-ui-product-crash-course.pdf',
       resourceDownloads: [
         {
@@ -136,15 +188,18 @@ export const projects: Project[] = [
   {
     title: 'Cursor Ruleset',
     slug: 'cursor-ruleset-resource',
-    hook: 'A custom configuration blueprint designed to optimize the output and coding standards of the Cursor AI code editor for modern development.',
-    stack: ['CODE CONFIG', 'AI TOOLING', 'DEVELOPER RESOURCE'],
+    hook: 'A comprehensive configuration blueprint designed to enforce strict coding standards, safe execution protocols, and architectural alignment for AI coding assistants in modern full-stack development.',
+    stack: ['AI CONFIGURATION', 'DEVEX', 'SYSTEM ARCHITECTURE'],
     category: 'Strategy',
     roleTag: 'Client Work',
     content: {
-      problem: "AI coding assistants can generate inconsistent, messy, or outdated code if they aren't given strict, project-specific boundaries and context.",
-      whatIBuilt: 'A comprehensive .cursorrules file that dictates styling, architecture preferences, and best practices for the AI to follow.',
+      problem:
+        "AI code assistants often make dangerous assumptions, suggest unverified modifications, or struggle with workspace context, leading to critical pathing errors and messy code. Without strict behavioral boundaries, they risk executing unsafe file operations, creating redundant logic, or breaking existing architectures without user consent.",
+      whatIBuilt:
+        'A robust, highly specific ruleset governing AI behavior for a full-stack environment (React Native, Python/FastAPI, Prisma, and Supabase). It enforces mandatory codebase analysis using terminal commands, dictates strict workspace-relative pathing for all file edits, and mandates the use of Angular-convention Conventional Commits for all version control.',
       myRole: 'Authored and iterated the ruleset architecture to enforce quality, consistency, and project-specific constraints.',
-      outcome: "Drastically reduces code review time and ensures all AI-generated code aligns perfectly with the project's technical standards.",
+      outcome:
+        'Transforms the AI from a reactive suggestion engine into a disciplined engineering partner. It guarantees a "safety-first" execution model by absolutely prohibiting unprompted commits or changes without explicit user instruction. Furthermore, it ensures all generated code adheres to clean code guidelines, DRY principles, and modern React/Database best practices.',
       previewUrl: '/resources/cursor-ruleset.md',
       resourceDownloads: [
         {
@@ -158,15 +213,18 @@ export const projects: Project[] = [
   {
     title: 'Sourcing SOP',
     slug: 'sourcing-sop',
-    hook: 'A step-by-step Standard Operating Procedure detailing the exact workflows for finding, vetting, and organizing high-quality targets.',
-    stack: ['SOP', 'OPERATIONS', 'INTERNAL DOC'],
+    hook: 'A step-by-step Standard Operating Procedure detailing the exact workflows for finding, vetting, and organizing high-quality targets using advanced search techniques and automated tracking.',
+    stack: ['SOURCING', 'STRATEGY', 'OPERATIONS', 'TALENT ACQUISITION'],
     category: 'Strategy',
     roleTag: 'Client Work',
     content: {
-      problem: 'Manual sourcing is highly repetitive, prone to human error, and lacks the standardization needed to scale operations efficiently.',
-      whatIBuilt: 'A clear, reproducible playbook that outlines the exact tools, search parameters, and data entry workflows needed for consistent sourcing.',
+      problem:
+        'Without a structured methodology, finding high-quality candidates often results in either overwhelming search volumes or entirely irrelevant data. Furthermore, providing stakeholders with a massive list of candidates who only "somewhat fit" is highly inefficient and creates unnecessary friction in the pipeline.',
+      whatIBuilt:
+        'A comprehensive Standard Operating Procedure (SOP) that outlines precise workflows for utilizing LinkedIn and Sales Navigator. It details advanced Boolean logic execution, candidate evaluation criteria, and a structured approach to spreadsheet data management.',
       myRole: 'Designed and documented the full SOP workflow so new contributors can execute consistently without tribal knowledge.',
-      outcome: 'Streamlines the pipeline, allowing new team members or virtual assistants to onboard instantly and execute tasks flawlessly.',
+      outcome:
+        'Empowers teams to conduct highly targeted searches and efficiently manage talent pipelines. The guide provides actionable tools, including automated spreadsheet formulas for ranking candidates based on years of experience and company tenure, allowing teams to instantly identify top-tier prospects while remaining adaptable to tight deadlines.',
       previewUrl: '/resources/sourcing-sop.pdf',
       resourceDownloads: [
         {

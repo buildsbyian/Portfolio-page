@@ -1,9 +1,8 @@
-import Link from 'next/link';
-
 export default function Footer() {
   return (
-    <footer className="border-t border-border py-8 md:py-10">
+    <footer className="border-t border-accent/20 py-8 md:py-10">
       <div className="section-container">
+        <div className="mb-6 h-[2px] w-24 bg-accent/70" aria-hidden="true" />
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           {/* Left: Links */}
           <div className="flex items-center gap-8">
@@ -37,7 +36,7 @@ export default function Footer() {
 
           {/* Right: Copyright */}
           <p className="text-sm text-text-secondary font-mono">
-            © {new Date().getFullYear()} Ian Kuksov
+            <span className="text-accent">©</span> {new Date().getFullYear()} Ian Kuksov
           </p>
         </div>
       </div>

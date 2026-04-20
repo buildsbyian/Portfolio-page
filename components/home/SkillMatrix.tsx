@@ -45,11 +45,11 @@ export default function SkillMatrix() {
                 </div>
 
                 {/* Skill items */}
-                <ul className="flex flex-wrap gap-2 relative z-10">
+                <ul className="relative z-10 flex flex-col gap-2.5">
                   {category.items.map((item) => (
                     <li
                       key={item}
-                      className="font-mono theme-pill"
+                      className="font-mono text-sm text-text-secondary leading-[1.7] tracking-[0.01em] transition-colors duration-200 hover:text-accent"
                     >
                       {item}
                     </li>

@@ -22,11 +22,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
-
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -42,7 +37,7 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-bg/80 backdrop-blur-xl border-b border-border'
+          ? 'bg-bg/88 backdrop-blur-xl border-b border-accent/20'
           : 'bg-transparent'
       }`}
       style={{ height: 'var(--nav-height)' }}
@@ -51,10 +46,10 @@ export default function Navbar() {
         {/* Monogram */}
         <Link
           href="/"
-          className="font-display text-[2rem] md:text-[2.4rem] leading-none tracking-[-0.04em] text-text-primary hover:text-accent transition-colors duration-200"
+          className="font-display text-lg md:text-xl lg:text-2xl leading-none tracking-[-0.02em] text-text-primary hover:text-accent transition-colors duration-200"
           aria-label="Home"
         >
-          IK
+          Ian Kuksov
         </Link>
 
         {/* Desktop Nav */}
@@ -63,10 +58,10 @@ export default function Navbar() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`font-mono text-[0.9rem] lg:text-[0.98rem] font-medium uppercase tracking-[0.14em] transition-colors duration-200 hover:text-accent ${
+                className={`relative font-mono text-[0.9rem] lg:text-[0.98rem] font-medium uppercase tracking-[0.14em] transition-colors duration-200 hover:text-accent after:absolute after:-bottom-3 after:left-0 after:h-[2px] after:w-full after:bg-accent after:origin-left after:transition-transform after:duration-200 after:content-[''] ${
                   isActive(link.href)
-                    ? 'text-accent'
-                    : 'text-text-secondary'
+                    ? 'text-accent after:scale-x-100'
+                    : 'text-text-secondary after:scale-x-0 hover:after:scale-x-100'
                 }`}
               >
                 {link.label}

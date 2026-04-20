@@ -6,8 +6,8 @@ interface TagProps {
 
 const variantStyles = {
   default: 'bg-surface text-text-secondary border-border',
-  accent: 'bg-accent/10 text-accent border-accent/20',
-  red: 'bg-red/10 text-red border-red/20',
+  accent: 'bg-surface text-accent border-accent/35',
+  red: 'bg-surface text-red border-red/30',
 };
 
 export default function Tag({ children, variant = 'default', className = '' }: TagProps) {

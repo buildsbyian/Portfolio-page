@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import AnimateIn, { StaggerContainer } from '@/components/ui/AnimateIn';
 import SectionLabel from '@/components/ui/SectionLabel';
@@ -80,24 +81,35 @@ interface ProjectCardProps {
 
 function ProjectCard({ project, large = false }: ProjectCardProps) {
   const isPlaceholder = project.slug === '#';
+  const highlightImage = project.content?.images?.[0];
+  const useMediaLayout = large && project.category !== 'Software';
 
   const cardContent = large ? (
-    <div className="group relative theme-card h-full min-h-[500px] flex flex-col overflow-hidden">
-      {/* Top 60% Placeholder Thumbnail */}
-      <div className="h-[60%] border-b border-border bg-border/30 relative overflow-hidden flex items-center justify-center">
-        {/* Subtle grid pattern background */}
-        <div 
-          className="absolute inset-0 opacity-[0.15]" 
-          style={{ 
-            backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)', 
-            backgroundSize: '16px 16px' 
-          }} 
-        />
-      </div>
-      
-      {/* Bottom 40% Content */}
+    <div className="group relative theme-card h-full min-h-[360px] flex flex-col overflow-hidden">
+      {useMediaLayout ? (
+        <div className="h-[60%] border-b border-border bg-border/30 relative overflow-hidden flex items-center justify-center">
+          {highlightImage ? (
+            <Image
+              src={highlightImage}
+              alt={`${project.title} highlight`}
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 opacity-[0.15]"
+              style={{
+                backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)',
+                backgroundSize: '16px 16px',
+              }}
+            />
+          )}
+        </div>
+      ) : null}
+
       <div className="flex-1 p-8 flex flex-col justify-between">
-        <div className="mb-4">
+        <div className="mb-6">
           <Tag variant={categoryTagVariant[project.category]}>
             {project.category}
           </Tag>
@@ -115,7 +127,7 @@ function ProjectCard({ project, large = false }: ProjectCardProps) {
           </span>
         </div>
       </div>
-      
+
       {/* Decorative corner accent on hover */}
       <div className="absolute top-0 right-0 w-12 h-12 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute top-0 right-0 w-[1px] h-8 bg-accent/30" />
