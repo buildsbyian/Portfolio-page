@@ -50,6 +50,11 @@ const experience = [
         sublabel: 'AI product · Live demo',
         href: '/work/ai-nutrition-assistant',
       },
+      {
+        label: 'AI News Digest Agent',
+        sublabel: 'Local LLM agent · Case study',
+        href: '/work/ai-news-agent',
+      },
     ],
   },
   {
