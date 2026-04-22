@@ -28,7 +28,7 @@ import type {
   TaskStatus,
 } from './types';
 
-const STORAGE_KEY = 'portfolio.command-center.demo.v3';
+export const STORAGE_KEY = 'portfolio.command-center.demo.v3';
 const SANITIZED_TERM_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bApollo\b/gi, 'SummitArc'],
   [/\bWEX\b/gi, 'Northlane'],
@@ -594,41 +594,6 @@ export default function BizDevCommandCenterDemo() {
     ),
   };
 
-  function resetDemo() {
-    const freshState = createCommandCenterSeed();
-    window.localStorage.removeItem(STORAGE_KEY);
-
-    startTransition(() => {
-      setState(freshState);
-      setActiveTool('bizdev-pipeline');
-      setActiveEventsTab('contacts');
-      setActiveBizdevTab('bizdev');
-      setContactSearch('');
-      setContactTypeFilter('all');
-      setContactAreaFilter('all');
-      setContactSort('newest');
-      setContactPanelMode(null);
-      setSelectedContactId(null);
-      setEventPanelMode(null);
-      setSelectedEventId(null);
-      setEventSearch('');
-      setEventTypeFilter('all');
-      setEventStatusFilter('all');
-      setEventSort('date-asc');
-      setPipelineSearch('');
-      setPipelineStageFilter('all');
-      setPipelineSort('next-action-asc');
-      setBizdevStatusFilter('all');
-      setBizdevPriorityFilter('all');
-      setBizdevSort('rating-desc');
-      setSelectedBizdevProjectId('');
-      setShowBizdevTaskForm(false);
-      setBizdevTaskDraft({ text: '', status: 'todo' });
-      setSelectedVipContactId('');
-      setActiveVipTab('dashboard');
-    });
-  }
-
   function openCreateContact() {
     setContactDraft(defaultContactDraft);
     setSelectedContactId(null);
@@ -964,34 +929,6 @@ export default function BizDevCommandCenterDemo() {
 
   return (
     <div className="space-y-8 bg-[#fcfcfd] px-4 py-6 text-[#111827] sm:px-6 lg:px-8 xl:px-10">
-      <section className="mx-auto w-full max-w-[1500px] rounded-2xl border border-[#e5e7eb] bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6366f1]">
-              Sanitized Live Demo
-            </p>
-            <h2 className="mt-1 text-2xl font-semibold text-[#111827]">
-              BizDev Command Center
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-[#6b7280]">
-              Source-shaped replica of the original internal tool. Data is local to this
-              browser.
-            </p>
-          </div>
-
-          <div className="flex flex-col items-start gap-3 lg:items-end">
-            <p className="text-xs text-[#6b7280]">No external services or shared state</p>
-            <button
-              type="button"
-              onClick={resetDemo}
-              className="rounded-md border border-[#d1d5db] bg-white px-3 py-2 text-sm font-medium text-[#111827] transition hover:bg-[#f9fafb]"
-            >
-              Reset Demo
-            </button>
-          </div>
-        </div>
-      </section>
-
       <section className="overflow-hidden border border-[#e5e7eb] bg-[#f9fafb] shadow-sm">
         <div className="border-b border-[#e5e7eb] bg-white">
           <div className="flex flex-wrap gap-1 px-4 py-2 sm:px-6 lg:px-8">
