@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import PageHero from '@/components/ui/PageHero';
 import Tag from '@/components/ui/Tag';
-import NutritionAssistantDemo from '@/demos/ai-nutrition-assistant';
-import BizDevCommandCenterDemo from '@/demos/bizdev-command-center';
+import BizDevDemoSection from '@/components/work/BizDevDemoSection';
+import NutritionDemoSection from '@/components/work/NutritionDemoSection';
 import AINewsAgentDemo from '@/demos/ai-news-agent';
 import { projects } from '@/data/projects';
 
@@ -35,6 +35,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const isWideDemo =
     project.slug === 'bizdev-command-center' || project.slug === 'ai-nutrition-assistant';
   const isAINewsAgent = project.slug === 'ai-news-agent';
+  const hasLiveDemo = isWideDemo;
   const projectLinks = [
     ...(project.content?.repoUrl
       ? [{ href: project.content.repoUrl, label: 'View GitHub Repo', external: true }]
@@ -60,11 +61,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     switch (project.category) {
       case 'Software':
         if (project.slug === 'bizdev-command-center') {
-          return <BizDevCommandCenterDemo />;
+          return <BizDevDemoSection />;
         }
 
         if (project.slug === 'ai-nutrition-assistant') {
-          return <NutritionAssistantDemo />;
+          return <NutritionDemoSection />;
         }
 
         return (
@@ -219,6 +220,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         }
         title={project.title}
         description={project.hook}
+        actions={
+          hasLiveDemo ? (
+            <Button href="#live-demo" variant="filled">
+              Check out Live Demo ↓
+            </Button>
+          ) : null
+        }
         footer={
           <div className="flex flex-wrap gap-2.5">
             {project.stack.map((tech) => (
