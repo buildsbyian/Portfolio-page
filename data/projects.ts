@@ -68,6 +68,24 @@ export const projects: Project[] = [
     },
   },
   {
+    title: 'AI News Digest Agent',
+    slug: 'ai-news-agent',
+    hook: 'An autonomous local AI agent that runs on a laptop without a GPU, scrapes multi-category news every morning, scores and summarizes with a local LLM, archives to an Obsidian vault, and emails the digest.',
+    stack: ['Local LLM', 'AI Agent', 'Autonomous'],
+    category: 'Software',
+    roleTag: 'Solo Builder',
+    content: {
+      problem:
+        'Staying current across eight topic areas — from AI research to markets to space — meant dozens of tabs, RSS feeds, and subreddits every morning. Cloud LLM APIs would cost a subscription and leak my reading habits to a third party. No existing tool produced a single daily brief from my exact source list, on my terms, running locally.',
+      whatIBuilt:
+        'A fully autonomous Python agent that wakes up daily at 7am, pulls RSS from my curated sources across eight categories, runs a two-pass local LLM pipeline (per-article rating + summary, then editorial category overview), filters by relevance, writes a structured Morning Brew-style digest plus per-article archives into my Obsidian vault, and emails the digest to my phone. Zero cloud calls. Runs on 16GB RAM and a Ryzen 7 CPU with no GPU via Ollama.',
+      myRole:
+        'Designed the pipeline architecture, wrote every module (fetch, dedupe, AI passes, vault writer, notifier, scheduler), tuned prompts for a small local model to produce strict parseable output, and sized the per-category batching to keep inference latency workable on CPU-only hardware.',
+      outcome:
+        'Replaced an hour of manual morning browsing with a 30-second read. The digest lands in Obsidian and in my inbox before I pick up the phone. Zero subscription cost, zero data exposure, and a growing local archive of summarized articles I can search and link across my notes.',
+    },
+  },
+  {
     title: 'Bongo Cat Typing Companion',
     slug: 'bongo-cat',
     hook: "An ESP32-based desk device with a digital pet that animates when you type -- displaying real-time typing speed, CPU, and RAM load.",

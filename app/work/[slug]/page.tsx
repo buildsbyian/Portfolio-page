@@ -6,6 +6,7 @@ import PageHero from '@/components/ui/PageHero';
 import Tag from '@/components/ui/Tag';
 import NutritionAssistantDemo from '@/demos/ai-nutrition-assistant';
 import BizDevCommandCenterDemo from '@/demos/bizdev-command-center';
+import AINewsAgentDemo from '@/demos/ai-news-agent';
 import { projects } from '@/data/projects';
 
 interface ProjectPageProps {
@@ -33,6 +34,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const isSoftware = project.category === 'Software';
   const isWideDemo =
     project.slug === 'bizdev-command-center' || project.slug === 'ai-nutrition-assistant';
+  const isAINewsAgent = project.slug === 'ai-news-agent';
   const projectLinks = [
     ...(project.content?.repoUrl
       ? [{ href: project.content.repoUrl, label: 'View GitHub Repo', external: true }]
@@ -231,7 +233,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         descriptionClassName="max-w-2xl text-base md:text-lg"
       />
 
-      {isSoftware ? (
+      {isAINewsAgent ? (
+        <AINewsAgentDemo project={project} />
+      ) : isSoftware ? (
         /* Stacked Layout for Software */
         <div className="space-y-14 md:space-y-16 lg:space-y-20">
           <section
