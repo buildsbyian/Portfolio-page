@@ -310,8 +310,8 @@ export default function CVPage() {
                     iankuksov.work@gmail.com
                   </a>
                   <a
-                    href="/cv.pdf"
-                    download="Ian_Kuksov_Resume.pdf"
+                    href="/Ian_Kuksov_CV.pdf"
+                    download="Ian_Kuksov_CV.pdf"
                     className="inline-flex items-center gap-2 font-mono text-sm text-text-secondary hover:text-accent transition-colors duration-200"
                   >
                     <IconGlyph icon="download" />
@@ -537,7 +537,7 @@ export default function CVPage() {
               <Button href="/work" variant="filled">
                 View Work
               </Button>
-              <Button href="/cv.pdf" variant="ghost" download="Ian_Kuksov_Resume.pdf">
+              <Button href="/Ian_Kuksov_CV.pdf" variant="ghost" download="Ian_Kuksov_CV.pdf">
                 Download PDF
               </Button>
             </div>

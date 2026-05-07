@@ -32,7 +32,7 @@ export default function HomePage() {
                 <Button href="/work" variant="filled">
                   View Work
                 </Button>
-                <Button href="/cv.pdf" variant="ghost" download="Ian_Kuksov_Resume.pdf">
+                <Button href="/Ian_Kuksov_CV.pdf" variant="ghost" download="Ian_Kuksov_CV.pdf">
                   Download CV
                 </Button>
               </div>
