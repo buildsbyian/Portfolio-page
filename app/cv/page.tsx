@@ -17,7 +17,7 @@ const experience = [
     company: 'Space Inch',
     role: 'Chief of Staff',
     period: '2024 – 2026',
-    type: 'Full-time · Remote',
+    type: 'Nashville, TN · Full-time · Remote',
     summary:
       'Direct CEO report at an US Based software company. Owned strategy, operations, AI tooling, and product prototyping without waiting for perfect specs or a dedicated engineering team.',
     companyLinks: [
@@ -49,11 +49,6 @@ const experience = [
         label: 'AI Nutrition Assistant',
         sublabel: 'AI product · Live demo',
         href: '/work/ai-nutrition-assistant',
-      },
-      {
-        label: 'AI News Digest Agent',
-        sublabel: 'Local LLM agent · Case study',
-        href: '/work/ai-news-agent',
       },
     ],
   },
@@ -92,7 +87,7 @@ const skills = [
     icon: '⬡',
     items: [
       'AI Prototyping (0→1)',
-      'Agent Architecture',
+      'Agentic Architecture',
       'MVP & POC Development',
       'Internal Tooling & Dashboards',
       'Prompt Engineering',
@@ -316,7 +311,7 @@ export default function CVPage() {
                   </a>
                   <a
                     href="/cv.pdf"
-                    download="Ian_Kuksov_CV.pdf"
+                    download="Ian_Kuksov_Resume.pdf"
                     className="inline-flex items-center gap-2 font-mono text-sm text-text-secondary hover:text-accent transition-colors duration-200"
                   >
                     <IconGlyph icon="download" />
@@ -483,10 +478,13 @@ export default function CVPage() {
                   B.Sc. Business, Management &amp; Marketing
                 </h2>
                 <p className="mt-4 max-w-md font-mono text-sm leading-relaxed text-text-secondary">
-                  Faculty of Economics and Tourism &ldquo;Dr. Mijo Mirković&rdquo;
+                  Faculty of Economics and Tourism &ldquo;Dr. Mijo Mirković&rdquo; · Pula, Croatia
                 </p>
                 <p className="mt-5 font-mono text-xs uppercase tracking-[0.12em] text-accent">
-                  Expected 2027
+                  Paused
+                </p>
+                <p className="mt-3 max-w-md font-mono text-xs leading-relaxed text-text-secondary italic">
+                  Paused before graduation due to personal circumstances.
                 </p>
               </div>
             </AnimateIn>
@@ -539,7 +537,7 @@ export default function CVPage() {
               <Button href="/work" variant="filled">
                 View Work
               </Button>
-              <Button href="/cv.pdf" variant="ghost" download="Ian_Kuksov_CV.pdf">
+              <Button href="/cv.pdf" variant="ghost" download="Ian_Kuksov_Resume.pdf">
                 Download PDF
               </Button>
             </div>

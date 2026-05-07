@@ -37,5 +37,5 @@
     ".next/dev/types/**/*.ts",
     "*.mts"
   ],
-  "exclude": ["node_modules", ".next", "source-events-managment-tool"]
+  "exclude": ["node_modules", ".next"]
 }
