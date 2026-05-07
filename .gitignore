@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local-only working docs
 /Building_Docs/
+
+# Claude Code worktrees (local-only)
+/.claude/

@@ -303,7 +303,7 @@ export default function CVPage() {
                     LinkedIn
                   </a>
                   <a
-                    href="mailto:iankuksov.work@gmail.com"
+                    href="mailto:iankuksov.work@gmail.com?subject=Hello%20from%20your%20portfolio"
                     className="inline-flex items-center gap-2 font-mono text-sm text-text-secondary hover:text-accent transition-colors duration-200"
                   >
                     <IconGlyph icon="email" />
