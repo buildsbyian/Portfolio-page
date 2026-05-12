@@ -5,6 +5,7 @@ export interface VaultItem {
   status: 'Ready' | 'Needs update' | 'TBD';
   tags?: string[];
   downloadUrl?: string;
+  pageUrl?: string;
 }
 
 /**
@@ -13,28 +14,31 @@ export interface VaultItem {
  */
 export const vaultItems: VaultItem[] = [
   {
-    title: 'Lean Product Framework',
-    description: 'Lightweight framework for product discovery and validation.',
-    type: 'Framework',
-    status: 'Ready',
-    tags: ['Product Strategy', 'Validation', 'Templates'],
-    downloadUrl: '/resources/lean-product-framework-fillable.pdf',
-  },
-  {
     title: 'Sourcing SOP',
     description: 'Standard operating procedure for talent sourcing pipelines.',
     type: 'SOP',
     status: 'Ready',
     tags: ['Sourcing', 'Operations', 'Talent Acquisition'],
     downloadUrl: '/resources/sourcing-sop.pdf',
+    pageUrl: '/work/sourcing-sop',
+  },
+  {
+    title: 'AI Development Workbook',
+    description: 'Practical manual for non-technical operators building software with AI tools.',
+    type: 'Workbook',
+    status: 'Ready',
+    tags: ['PDF Guide', 'AI-Native', 'Free Resource'],
+    downloadUrl: '/resources/ai-workbook.pdf',
+    pageUrl: '/work/ai-development-workbook',
   },
   {
     title: 'Cursor Ruleset',
     description: 'Opinionated ruleset for AI-assisted code editors.',
     type: 'Resource',
-    status: 'Needs update',
+    status: 'Ready',
     tags: ['AI Configuration', 'DevEx', 'System Architecture'],
     downloadUrl: '/resources/cursor-ruleset.md',
+    pageUrl: '/work/cursor-ruleset-resource',
   },
   {
     title: '3D Printing Articles',

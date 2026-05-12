@@ -7,13 +7,10 @@ import { vaultItems } from '@/data/vault';
 
 export default function VaultTeaser() {
   // Only show curated ready items on the homepage teaser.
-  const displayItems = vaultItems
-    .filter(
-      (item) =>
-        item.status === 'Ready' &&
-        ['Sourcing SOP', 'Lean Product Framework'].includes(item.title)
-    )
-    .slice(0, 3);
+  const featuredTitles = ['Sourcing SOP', 'AI Development Workbook', 'Cursor Ruleset'];
+  const displayItems = featuredTitles
+    .map((title) => vaultItems.find((item) => item.title === title))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (
     <section className="py-16 md:py-20 border-t border-border">
@@ -42,7 +39,15 @@ export default function VaultTeaser() {
                     <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-text-secondary">
                       {item.type}
                     </span>
-                    {item.downloadUrl ? (
+                    {item.pageUrl ? (
+                      <Link
+                        href={item.pageUrl}
+                        className="font-mono text-xs text-accent hover:text-accent-hover transition-colors duration-200 inline-flex items-center gap-1"
+                      >
+                        View
+                        <span className="text-[10px]">→</span>
+                      </Link>
+                    ) : item.downloadUrl ? (
                       <a
                         href={item.downloadUrl}
                         target="_blank"
